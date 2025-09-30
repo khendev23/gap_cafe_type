@@ -1,0 +1,105 @@
+.boContainer {
+    width: 100vw;
+    height: 100dvh;
+    background: white;
+    color: black;
+    overflow-y: scroll;
+}
+.boTitle {
+    text-align: center;
+    padding: 3vh;
+}
+.connectionStatus {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.ordersBox {
+    display: flex;
+    width: 95vw;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+.orderContainer {
+    border: 1px solid black;
+    width: 22%;
+    height: 40dvh;
+    padding: 2vh;
+    margin: 1vh 1vw;
+    overflow-y: scroll;
+}
+.orderContainer h3 {
+    margin-bottom: 1vh;
+}
+.orderContainer ul {
+    list-style-type: none;
+    margin-top: 1vh;
+}
+.orderContainer ul li {
+    margin : 1vw 0;
+}
+.orderContainer label {
+    display: flex;
+}
+.orderContainer input {
+    margin-right: 1.5vw;
+}
+.orderContainer p {
+    font-size: 1.5vw;
+}
+.optValue {
+    font-size: 1.2vw;
+}
+.checkedMenu {
+    color: gray;
+    text-decoration: line-through;
+}
+.checkedOrder {
+    text-decoration: line-through;
+}
+.ordererBox {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5vh;
+}
+.ordererBox button {
+    width: 4vw;
+    font-size: 1.5vw;
+}
+.menuControlBox {
+    position: absolute;
+    top: 3.5vh;
+    right: 3vw;
+}
+.menuControlBox button {
+    font-size: 1.5vw;
+    width: 10vw;
+}
+.menuList {
+    display: flex;
+    justify-content: right;
+    width: 100vw;
+    text-align: center;
+    padding-right: 3vw;
+    height: 80dvh;
+    overflow-y: scroll;
+    position: fixed;
+}
+.menuTable {
+    text-align: center;
+    border: 1px solid black;
+    padding: 1vh;
+    background-color: white;
+    z-index: 10;
+}
+.menuTable td {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid black;
+}
+.checkboxLarge {
+    transform: scale(1.5); /* 숫자를 키우면 더 커짐 */
+    margin-right: 8px; /* 여백도 주면 보기 좋아 */
+}
+
+

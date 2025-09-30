@@ -21,6 +21,7 @@ const nextConfig = {
             // },
         ],
     },
+    output: "standalone",
 } satisfies NextConfig;
 
 export default nextConfig;

@@ -11,6 +11,7 @@ export interface MenuItem {
     name: string;
     category: Category;
     imageDataUrl?: string;
+    soldOut?: boolean;
 }
 
 export type Temp = "HOT" | "ICE";
@@ -57,17 +58,17 @@ export default function KioskPage() {
     const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
     const [selectedOptions, setSelectedOptions] = useState<Options>({});
 
+    // ----- 주문 플로우 상태 -----
+    const [isNameModalVisible, setIsNameModalVisible] = useState(false);
+    const [isAccountModalVisible, setIsAccountModalVisible] = useState(false);
+    const [customerName, setCustomerName] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isCompleteVisible, setIsCompleteVisible] = useState(false);
+
     // ----- DB 연동 상태 (이전 키오스크의 fetch 로직 반영) -----
     const [ipAddress, setIpAddress] = useState("");
     const [menusRaw, setMenusRaw] = useState<any[]>([]);
     const [bestRaw, setBestRaw] = useState<any[]>([]);
-
-    // ----- 주문 플로우 상태 -----
-    const [isNameModalVisible, setIsNameModalVisible] = useState(false);
-    const [isAccountModalVisible, setIsAccountModalVisible] = useState(false);
-    const [isCompleteVisible, setIsCompleteVisible] = useState(false); // ✅ 완료표시 모달
-    const [customerName, setCustomerName] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // IP 조회 (이전 코드와 동일한 서비스 사용)
     useEffect(() => {
@@ -119,7 +120,6 @@ export default function KioskPage() {
         };
 
         return menusRaw
-            .filter((m) => m?.USE_YN !== "N") // 품절 제외 (원하시면 포함 후 클릭만 막도록 변경 가능)
             .map((m) => {
                 const category = mapCtgr(m?.CATEGORY);
                 const img = isInternal ? m?.IN_GAP_IMG_URL : m?.IMG_URL;
@@ -128,6 +128,7 @@ export default function KioskPage() {
                     name: String(m?.NAME ?? m?.name ?? "메뉴"),
                     category: (category || "COFFEE") as Category,
                     imageDataUrl: img || demoImg(String(m?.NAME ?? "Menu")),
+                    soldOut: m?.USE_YN === "N",
                 };
                 return item;
             });
@@ -152,8 +153,29 @@ export default function KioskPage() {
 
     const clear = () => setCart({});
 
+    // 개별 항목 삭제
+    const removeEntry = (key: string) =>
+        setCart((c) => {
+            const next = { ...c };
+            delete next[key];
+            return next;
+        });
+
     const onMenuClick = (item: MenuItem) => {
+        if (item.soldOut) return;
         setSelectedItem(item);
+
+        // ✅ 아이스티(n11)는 ICE-only + 논커피 기본 옵션 포함
+        if (item.id === "n11") {
+            setSelectedOptions({ temp: "ICE", ice: "보통", shotToggle: "없음", sweetness: "보통" });
+            return;
+        }
+        // ✅ 아샷추(c20)는 ICE-only + 논커피 기본 옵션 포함
+        if (item.id === "c20") {
+            setSelectedOptions({ temp: "ICE", ice: "보통", coffeeShot: "보통" });
+            return;
+        }
+
         // 카테고리별 기본 옵션 설정 (이전 규칙 유지)
         if (item.category === "ADE") {
             setSelectedOptions({ temp: "ICE", ice: "보통", shotToggle: "없음", sweetness: "보통" });
@@ -214,7 +236,7 @@ export default function KioskPage() {
                 options: e.options,
             }));
 
-            await axios.post("/api/orders", {
+            const { data } = await axios.post("/api/orders", {
                 orderInfo: { customerName },
                 items,
                 ipAddress,
@@ -227,7 +249,7 @@ export default function KioskPage() {
             setIsCompleteVisible(true);  // 완료표시 모달 오픈
 
             // (선택) 몇 초 뒤 자동 닫기
-            setTimeout(() => setIsCompleteVisible(false), 2500);
+            // setTimeout(() => setIsCompleteVisible(false), 2500);
         } catch (err) {
             console.error("주문 전송 실패", err);
             alert("주문 전송에 실패했습니다. 잠시 후 다시 시도해 주세요.");
@@ -236,13 +258,12 @@ export default function KioskPage() {
         }
     };
 
-
     return (
         <main className="min-h-screen bg-amber-50 text-neutral-900 text-xl">
             {/* Top bar */}
             <div className="mx-auto max-w-5xl px-6 pt-6 pb-3">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-3xl font-bold tracking-tight">START ORDER</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">은혜카페</h1>
                 </div>
                 <div className="mt-6 flex gap-4">
                     {CATEGORIES.map((c) => (
@@ -263,11 +284,24 @@ export default function KioskPage() {
                     {filtered.map((item) => (
                         <button
                             key={item.id}
-                            onClick={() => onMenuClick(item)}
-                            className="group rounded-2xl bg-white p-5 shadow-md ring-1 ring-neutral-200 transition hover:shadow-lg"
+                            onClick={() => onMenuClick(item)} disabled={item.soldOut}
+                            className={[
+                                "group relative rounded-2xl bg-white p-5 shadow-md ring-1 ring-neutral-200 transition hover:shadow-lg",
+                                item.soldOut ? "opacity-60 grayscale cursor-not-allowed hover:shadow-md" : ""
+                            ].join(" ")}
+                            aria-disabled={item.soldOut || undefined}
+                            title={item.soldOut ? "품절" : undefined}
                         >
                             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl">
-                                <Image src={item.imageDataUrl || demoImg(item.name)} alt={item.name} fill className="object-contain" />
+                                <Image src={item.imageDataUrl || demoImg(item.name)} alt={item.name} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 320px" quality={70} className="object-contain" />
+                                {/* ✅ 품절 오버레이 */}
+                                {item.soldOut && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/35">
+                                        <span className="rounded-xl bg-white px-4 py-2 text-xl font-bold text-neutral-900 shadow">
+                                          품절
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                             <div className="mt-4 text-center">
                                 <span className="text-2xl font-bold">{item.name}</span>
@@ -295,6 +329,16 @@ export default function KioskPage() {
                                             <button type="button" className="rounded-full bg-white px-3 py-1 ring-1 ring-neutral-300 hover:bg-neutral-50 text-base" onClick={() => sub(key)} aria-label="수량 감소">−</button>
                                             <span className="w-10 text-center text-lg tabular-nums">{entry.qty}</span>
                                             <button type="button" className="rounded-full bg-white px-3 py-1 ring-1 ring-neutral-300 hover:bg-neutral-50 text-base" onClick={() => add(key)} aria-label="수량 증가">+</button>
+                                            {/* ✅ 개별 삭제 버튼 */}
+                                            <button
+                                                type="button"
+                                                className="ml-2 rounded-full bg-white px-3 py-1 ring-1 ring-red-300 hover:bg-red-50 text-base text-red-600"
+                                                onClick={() => removeEntry(key)}
+                                                aria-label="항목 삭제"
+                                                title="항목 삭제"
+                                            >
+                                                삭제
+                                            </button>
                                         </div>
                                     </li>
                                 ))}
@@ -303,7 +347,14 @@ export default function KioskPage() {
                     </div>
                     <div className="flex flex-col gap-2">
                         <button type="button" className="rounded-xl px-4 py-3 text-sm font-semibold ring-1 ring-neutral-300 hover:bg-neutral-100" onClick={clear}>비우기</button>
-                        <button type="button" className="rounded-xl bg-neutral-900 px-5 py-3 text-white shadow hover:bg-neutral-800 disabled:opacity-40" onClick={() => setIsNameModalVisible(true)} disabled={Object.keys(cart).length === 0}>주문하기</button>
+                        <button
+                            type="button"
+                            className="rounded-xl bg-neutral-900 px-5 py-3 text-white shadow hover:bg-neutral-800 disabled:opacity-40"
+                            onClick={() => setIsNameModalVisible(true)}
+                            disabled={Object.keys(cart).length === 0}
+                        >
+                            주문하기
+                        </button>
                     </div>
                 </div>
             </div>
@@ -318,14 +369,16 @@ export default function KioskPage() {
                         </div>
 
                         {/* Temperature / ADE ICE only */}
-                        {selectedItem.category === "ADE" ? (
+                        {selectedItem.id === "n11" || selectedItem.id === "c20" || selectedItem.category === "ADE" ? (
                             <div className="mb-8">
                                 <h3 className="mb-3 font-bold">온도</h3>
                                 <div className="flex gap-4 text-xl">
                                     <button disabled className="px-4 py-3 rounded-xl border bg-neutral-100 text-neutral-500 cursor-not-allowed">HOT</button>
                                     <button className="px-4 py-3 rounded-xl border bg-neutral-900 text-white">ICE</button>
                                 </div>
-                                <p className="mt-2 text-lg text-neutral-500">에이드는 ICE만 가능합니다.</p>
+                                <p className="mt-2 text-lg text-neutral-500">
+                                    {selectedItem.id === "n11" ? "아이스티는 ICE만 가능합니다." : selectedItem.id === "c20" ? "아샷추는 ICE만 가능합니다." : "에이드는 ICE만 가능합니다."}
+                                </p>
                             </div>
                         ) : (
                             <div className="mb-8">
@@ -386,39 +439,39 @@ export default function KioskPage() {
 
                         <div className="flex justify-end gap-4 mt-8">
                             <button className="rounded-xl bg-neutral-200 px-6 py-3 text-xl" onClick={() => setSelectedItem(null)}>취소</button>
-                            <button className="rounded-xl bg-neutral-900 px-6 py-3 text-xl text-white" onClick={addToOrder}>Add to Order</button>
+                            <button className="rounded-xl bg-neutral-900 px-6 py-3 text-xl text-white" onClick={addToOrder}>장바구니 담기</button>
                         </div>
                     </div>
                 </div>
             )}
 
+            {/* 주문자 이름 모달 */}
             {isNameModalVisible && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6">
                     <div className="w-full max-w-xl rounded-3xl bg-white p-8 shadow-2xl">
-                        <h3 className="text-2xl font-bold mb-4">주문자 이름</h3>
+                        <h2 className="text-3xl font-extrabold mb-6">주문자 이름</h2>
                         <input
                             autoFocus
-                            type="text"
                             value={customerName}
                             onChange={(e) => setCustomerName(e.target.value)}
-                            placeholder="이름을 입력하세요"
-                            className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-lg outline-none focus:ring-2 focus:ring-neutral-800"
+                            placeholder="이름을 입력해 주세요"
+                            className="w-full rounded-2xl border border-neutral-300 px-5 py-4 text-2xl outline-none focus:ring-2 focus:ring-neutral-800"
                         />
-                        <div className="mt-6 flex justify-end gap-3">
+                        <div className="mt-8 flex justify-end gap-3">
                             <button
-                                className="rounded-xl bg-neutral-200 px-5 py-3"
+                                className="rounded-xl bg-neutral-200 px-6 py-3 text-xl"
                                 onClick={() => setIsNameModalVisible(false)}
                             >
                                 취소
                             </button>
                             <button
-                                className="rounded-xl bg-neutral-900 px-5 py-3 text-white disabled:opacity-40"
+                                className="rounded-xl bg-neutral-900 px-6 py-3 text-xl text-white disabled:opacity-40"
+                                disabled={!customerName.trim()}
                                 onClick={() => {
                                     if (!customerName.trim()) return;
                                     setIsNameModalVisible(false);
-                                    setIsAccountModalVisible(true); // ✅ 다음 단계
+                                    setIsAccountModalVisible(true);
                                 }}
-                                disabled={!customerName.trim()}
                             >
                                 확인
                             </button>
@@ -427,34 +480,30 @@ export default function KioskPage() {
                 </div>
             )}
 
+            {/* 계좌 안내 모달 */}
             {isAccountModalVisible && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6">
                     <div className="w-full max-w-xl rounded-3xl bg-white p-8 shadow-2xl">
-                        <h3 className="text-2xl font-bold mb-4">입금 안내</h3>
-                        <div className="space-y-2 text-lg">
-                            <p>카카오뱅크</p>
-                            <p className="font-bold text-2xl tabular-nums">
-                                0000-00-0000668 <span className="text-base">(이상하)</span>
-                            </p>
-                            <button
-                                className="rounded-lg px-3 py-2 ring-1 ring-neutral-300 hover:bg-neutral-50 text-sm"
-                                onClick={() => navigator.clipboard?.writeText("0000-00-0000668 (이상하)").catch(() => {})}
-                            >
-                                복사
-                            </button>
-                            <p>입금해주세요. 후원해주신 금액은 선교 후원에 쓰입니다.</p>
+                        <h2 className="text-3xl font-extrabold mb-2">계좌번호 안내</h2>
+                        <p className="text-xl text-neutral-700">카카오뱅크</p>
+                        <div className="mt-2 flex items-center gap-3">
+                            <code className="rounded-xl bg-neutral-100 px-4 py-3 text-2xl tracking-wider">3333-28-2011668</code>
+                            <span className="text-xl">(이상하)</span>
+
                         </div>
-                        <div className="mt-6 flex justify-end gap-3">
+                        <p className="mt-4 text-lg text-neutral-600">입금해주세요. 후원해주신 금액은 선교 후원에 쓰입니다.</p>
+
+                        <div className="mt-8 flex justify-end gap-3">
                             <button
-                                className="rounded-xl bg-neutral-200 px-5 py-3"
+                                className="rounded-xl bg-neutral-200 px-6 py-3 text-xl"
                                 onClick={() => setIsAccountModalVisible(false)}
                             >
                                 닫기
                             </button>
                             <button
-                                className="rounded-xl bg-neutral-900 px-5 py-3 text-white disabled:opacity-40"
-                                onClick={submitOrder}         // ✅ DB 전송
+                                className="rounded-xl bg-neutral-900 px-6 py-3 text-xl text-white disabled:opacity-40"
                                 disabled={isSubmitting}
+                                onClick={submitOrder}
                             >
                                 {isSubmitting ? "전송 중..." : "확인"}
                             </button>
@@ -462,12 +511,12 @@ export default function KioskPage() {
                     </div>
                 </div>
             )}
-
+            {/* 주문 완료 모달 */}
             {isCompleteVisible && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6">
                     <div className="w-full max-w-md rounded-3xl bg-white p-10 shadow-2xl text-center">
                         <div className="text-5xl mb-4">✅</div>
-                        <h3 className="text-2xl font-bold mb-2">주문 완료</h3>
+                        <h3 className="text-2xl font-bold mb-2">주문 완료되었습니다</h3>
                         <p className="text-neutral-600">주문이 접수되었습니다. 감사합니다!</p>
                         <div className="mt-6">
                             <button
@@ -480,7 +529,6 @@ export default function KioskPage() {
                     </div>
                 </div>
             )}
-
         </main>
     );
 }
