@@ -3,6 +3,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  color-scheme: light;
+}
+
+/* 혹시 OS가 강제로 다크를 밀어도 라이트 유지 */
+@media (prefers-color-scheme: dark) {
+  :root { color-scheme: light; }
 }
 
 @theme inline {

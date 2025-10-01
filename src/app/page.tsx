@@ -42,7 +42,7 @@ export default function Home() {
 
             {/* 관리자 */}
             <Link
-                href="/bo"
+                href="/newBo"
                 className="group relative rounded-3xl bg-white p-8 md:p-10 shadow-xl ring-1 ring-neutral-200 hover:shadow-2xl hover:ring-neutral-300 transition"
             >
               <div className="flex items-center gap-5">
