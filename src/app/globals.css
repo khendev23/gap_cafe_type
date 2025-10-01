@@ -24,3 +24,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes omq-x {
+  0%   { transform: translateX(0); }
+  10%  { transform: translateX(0); }                 /* 시작 잠깐 정지 */
+  90%  { transform: translateX(calc(-1 * var(--omq-distance))); }
+  100% { transform: translateX(calc(-1 * var(--omq-distance))); }
+}
+
+.omq-run {
+  will-change: transform;
+  animation: omq-x var(--omq-duration, 8s) linear infinite;
+  padding-right: 24px; /* 끝에서 여유 */
+}
+

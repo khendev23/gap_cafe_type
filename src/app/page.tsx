@@ -1,103 +1,69 @@
-import Image from "next/image";
+// app/page.tsx
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+      <main className="min-h-screen bg-amber-50">
+        {/* 상단 로고/타이틀 영역 (필요 없으면 제거 가능) */}
+        <header className="mx-auto max-w-4xl px-6 pt-10 pb-8">
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900">
+            은혜카페
+          </h1>
+          <p className="mt-2 text-neutral-600 text-lg md:text-xl">
+            무엇을 하시겠어요?
+          </p>
+        </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+        {/* 메인 선택 카드 */}
+        <section className="mx-auto max-w-4xl px-6 pb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            {/* 메뉴 주문 */}
+            <Link
+                href="/menu"
+                className="group relative rounded-3xl bg-white p-8 md:p-10 shadow-xl ring-1 ring-neutral-200 hover:shadow-2xl hover:ring-neutral-300 transition"
+            >
+              <div className="flex items-center gap-5">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-100">
+                  <span className="text-3xl" aria-hidden>🍹</span>
+                </div>
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-extrabold text-neutral-900">
+                    메뉴 주문
+                  </h2>
+                  <p className="mt-1 text-neutral-600 text-base md:text-lg">
+                    키오스크 화면으로 이동합니다
+                  </p>
+                </div>
+              </div>
+              <div className="pointer-events-none absolute right-6 top-6 text-neutral-400 group-hover:text-neutral-600 transition">
+                <span className="text-2xl md:text-3xl" aria-hidden>➜</span>
+              </div>
+            </Link>
+
+            {/* 관리자 */}
+            <Link
+                href="/bo"
+                className="group relative rounded-3xl bg-white p-8 md:p-10 shadow-xl ring-1 ring-neutral-200 hover:shadow-2xl hover:ring-neutral-300 transition"
+            >
+              <div className="flex items-center gap-5">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100">
+                  <span className="text-3xl" aria-hidden>🧑‍🍳</span>
+                </div>
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-extrabold text-neutral-900">
+                    관리자
+                  </h2>
+                  <p className="mt-1 text-neutral-600 text-base md:text-lg">
+                    주문 관리/메뉴 컨트롤 화면
+                  </p>
+                </div>
+              </div>
+              <div className="pointer-events-none absolute right-6 top-6 text-neutral-400 group-hover:text-neutral-600 transition">
+                <span className="text-2xl md:text-3xl" aria-hidden>➜</span>
+              </div>
+            </Link>
+          </div>
+        </section>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
   );
 }

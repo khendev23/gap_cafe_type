@@ -2,6 +2,9 @@
 import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import axios from "axios";
+import IdleSlideShow from "@/app/menu/IdleSlideShow"
+import OverflowMarquee from "@/app/menu/OverflowMarquee";
+import useIsMobile from "@/util/useIsMobile";
 
 // ========================= Types =========================
 export type Category = "COFFEE" | "NON_COFFEE" | "ADE" | "TEA";
@@ -70,6 +73,14 @@ export default function KioskPage() {
     const [menusRaw, setMenusRaw] = useState<any[]>([]);
     const [bestRaw, setBestRaw] = useState<any[]>([]);
 
+    // 새로고침 상태
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    // 유휴상태
+    const [isIdleVisible, setIsIdleVisible] = useState(false);
+
+    const isMobile = useIsMobile();
+
     // IP 조회 (이전 코드와 동일한 서비스 사용)
     useEffect(() => {
         axios
@@ -98,6 +109,17 @@ export default function KioskPage() {
         if (!ipAddress) return;
         void fetchMenus();
     }, [ipAddress]);
+
+    // 메뉴 리로드 핸들러
+    const handleRefreshMenus = async () => {
+        if (!ipAddress) return;
+        setIsRefreshing(true);
+        try {
+            await fetchMenus();
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
 
     // API 스키마를 현재 컴포넌트의 MenuItem 형태로 매핑
     const ITEMS: MenuItem[] = useMemo(() => {
@@ -259,18 +281,36 @@ export default function KioskPage() {
     };
 
     return (
-        <main className="min-h-screen bg-amber-50 text-neutral-900 text-xl">
+        <main className="min-h-screen bg-amber-50 text-neutral-900 text-xl"
+              style={{
+                  pointerEvents: isIdleVisible ? 'none' : 'auto',
+                  userSelect: isIdleVisible ? 'none' : 'auto',
+                  touchAction: isIdleVisible ? 'none' : 'auto',
+              }}
+        >
             {/* Top bar */}
             <div className="mx-auto max-w-5xl px-6 pt-6 pb-3">
                 <div className="flex items-center justify-between">
                     <h1 className="text-3xl font-bold tracking-tight">은혜카페</h1>
+                    {/* ✅ 새로고침 버튼 */}
+                    <button
+                        type="button"
+                        onClick={handleRefreshMenus}
+                        disabled={!ipAddress || isRefreshing}
+                        title="메뉴 리로드"
+                        className="rounded-xl bg-white px-4 py-2 text-base font-semibold ring-1 ring-neutral-300 hover:bg-neutral-100 disabled:opacity-40"
+                    >
+                        {isRefreshing ? "새로고침 중..." : "새로고침"}
+                    </button>
                 </div>
-                <div className="mt-6 flex gap-4">
+                <div className="mt-4 md:mt-6 flex gap-2 md:gap-4">
                     {CATEGORIES.map((c) => (
                         <button
                             key={c.key}
                             onClick={() => setActive(c.key)}
-                            className={["rounded-xl px-6 py-3 text-xl font-bold shadow-sm", active === c.key ? "bg-white ring-2 ring-neutral-800" : "bg-neutral-100 hover:bg-neutral-200"].join(" ")}
+                            className={["rounded-xl px-4 py-2 text-base md:text-xl font-bold shadow-sm",
+                                active === c.key ? "bg-white ring-2 ring-neutral-800" : "bg-neutral-100 hover:bg-neutral-200"
+                            ].join(" ")}
                         >
                             {c.label}
                         </button>
@@ -279,14 +319,14 @@ export default function KioskPage() {
             </div>
 
             {/* Grid (3 columns) */}
-            <div className="mx-auto max-w-5xl px-6 pb-56">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="mx-auto max-w-5xl px-4 md:px-6 pb-40 md:pb-56">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
                     {filtered.map((item) => (
                         <button
                             key={item.id}
                             onClick={() => onMenuClick(item)} disabled={item.soldOut}
                             className={[
-                                "group relative rounded-2xl bg-white p-5 shadow-md ring-1 ring-neutral-200 transition hover:shadow-lg",
+                                "group relative rounded-2xl bg-white p-4 md:p-5 shadow-md ring-1 ring-neutral-200 transition hover:shadow-lg",
                                 item.soldOut ? "opacity-60 grayscale cursor-not-allowed hover:shadow-md" : ""
                             ].join(" ")}
                             aria-disabled={item.soldOut || undefined}
@@ -304,7 +344,7 @@ export default function KioskPage() {
                                 )}
                             </div>
                             <div className="mt-4 text-center">
-                                <span className="text-2xl font-bold">{item.name}</span>
+                                <OverflowMarquee>{item.name}</OverflowMarquee>
                             </div>
                         </button>
                     ))}
@@ -528,6 +568,22 @@ export default function KioskPage() {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {!isMobile && (
+                <IdleSlideShow
+                    key={Date.now()}
+                    ipAddress={ipAddress}
+                    visible={isIdleVisible}
+                    onActive={() => {
+                        // 약간의 딜레이 후 활성화 (이벤트 누수 방지)
+                        setTimeout(() => setIsIdleVisible(false), 300);
+                    }}
+                    onIdle={() => {
+                        setIsIdleVisible(true);
+                        void fetchMenus(); // 대기 진입시 메뉴 최신화
+                    }}
+                />
             )}
         </main>
     );
