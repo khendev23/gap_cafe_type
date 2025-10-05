@@ -4,8 +4,10 @@ import type { NextConfig } from "next";
 const nextConfig = {
     images: {
         // HTTPS 도메인은 domains로 간단히 허용
-        domains: ["cdn.jsdelivr.net", "gap.synology.me"],
+       // domains: ["cdn.jsdelivr.net", "gap.synology.me"],
         // HTTP, IP, 포트 등은 remotePatterns로 허용
+        unoptimized: true,
+
         remotePatterns: [
             {
                 protocol: "http",
