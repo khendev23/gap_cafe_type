@@ -485,8 +485,7 @@ export default function KioskPage() {
             {/* Option Modal */}
             {selectedItem && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6">
-                    <div className="w-full max-w-2xl rounded-3xl bg-white p-8 shadow-2xl text-2xl">
-                        <div className="mb-6 flex items-center justify-between">
+                    <div className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl text-2xl max-h-[90vh] overflow-y-auto p-8">                        <div className="mb-6 flex items-center justify-between">
                             <h2 className="text-3xl font-extrabold">{selectedItem.name}</h2>
                             <button onClick={() => setSelectedItem(null)} className="rounded-full border border-neutral-400 px-4 py-2 text-xl hover:bg-neutral-100">✕</button>
                         </div>
