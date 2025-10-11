@@ -281,7 +281,7 @@ export default function KioskPage() {
     };
 
     return (
-        <main className="min-h-screen bg-amber-50 text-neutral-900 text-xl"
+        <main className="min-h-screen bg-amber-50 text-neutral-900 text-xl dark:bg-amber-50 dark:text-neutral-900"
               style={{
                   pointerEvents: isIdleVisible ? 'none' : 'auto',
                   userSelect: isIdleVisible ? 'none' : 'auto',
@@ -298,7 +298,7 @@ export default function KioskPage() {
                         onClick={handleRefreshMenus}
                         disabled={!ipAddress || isRefreshing}
                         title="메뉴 리로드"
-                        className="rounded-xl bg-white px-4 py-2 text-base font-semibold ring-1 ring-neutral-300 hover:bg-neutral-100 disabled:opacity-40"
+                        className="rounded-xl bg-white px-4 py-2 text-base font-semibold ring-1 ring-neutral-300 hover:bg-neutral-100 disabled:opacity-40 dark:bg-white dark:ring-neutral-300 dark:hover:bg-neutral-100"
                     >
                         {isRefreshing ? "새로고침 중..." : "새로고침"}
                     </button>
@@ -309,7 +309,7 @@ export default function KioskPage() {
                             key={c.key}
                             onClick={() => setActive(c.key)}
                             className={["rounded-xl px-4 py-2 text-base md:text-xl font-bold shadow-sm",
-                                active === c.key ? "bg-white ring-2 ring-neutral-800" : "bg-neutral-100 hover:bg-neutral-200"
+                                active === c.key ? "bg-white ring-2 ring-neutral-800 dark:bg-white dark:ring-neutral-800" : "bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-100 dark:hover:bg-neutral-200"
                             ].join(" ")}
                         >
                             {c.label}
@@ -326,7 +326,7 @@ export default function KioskPage() {
                             key={item.id}
                             onClick={() => onMenuClick(item)} disabled={item.soldOut}
                             className={[
-                                "group relative rounded-2xl bg-white p-4 md:p-5 shadow-md ring-1 ring-neutral-200 transition hover:shadow-lg",
+                                "group relative rounded-2xl bg-white p-4 md:p-5 shadow-md ring-1 ring-neutral-200 transition hover:shadow-lg dark:bg-white dark:ring-neutral-200",
                                 item.soldOut ? "opacity-60 grayscale cursor-not-allowed hover:shadow-md" : ""
                             ].join(" ")}
                             aria-disabled={item.soldOut || undefined}
@@ -336,8 +336,8 @@ export default function KioskPage() {
                                 <Image src={item.imageDataUrl || demoImg(item.name)} alt={item.name} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 320px" quality={70} className="object-contain" />
                                 {/* ✅ 품절 오버레이 */}
                                 {item.soldOut && (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-black/35">
-                                        <span className="rounded-xl bg-white px-4 py-2 text-xl font-bold text-neutral-900 shadow">
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/35 dark:bg-black/35">
+                                        <span className="rounded-xl bg-white px-4 py-2 text-xl font-bold text-neutral-900 shadow dark:bg-white dark:ring-neutral-900">
                                           품절
                                         </span>
                                     </div>
@@ -352,30 +352,30 @@ export default function KioskPage() {
             </div>
 
             {/* Bottom cart area */}
-            <div className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/95 backdrop-blur">
+            <div className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/95 backdrop-blur dark:border-neutral-200 dark:bg-white/95">
                 <div className="mx-auto max-w-5xl px-4 py-4">
                     {/* Mobile layout (stack) */}
-                    <div className="md:hidden space-y-3">
+                    <div className="sm:hidden space-y-3">
                         <div className="max-h-56 overflow-y-auto pr-1">
                             {Object.keys(cart).length === 0 ? (
                                 <p className="truncate text-neutral-500 text-sm">선택한 메뉴가 여기에 표시됩니다.</p>
                             ) : (
                                 <ul className="flex flex-col gap-2">
                                     {Object.entries(cart).map(([key, entry]) => (
-                                        <li key={key} className="rounded-lg bg-neutral-100 p-3">
+                                        <li key={key} className="rounded-lg bg-neutral-100 p-3 dark:bg-neutral-100">
                                             <div className="flex items-start justify-between gap-2">
                                                 <div className="min-w-0">
                                                     <div className="text-sm font-semibold truncate">
                                                         {entry.item.name} × {entry.qty}
                                                     </div>
-                                                    <div className="text-xs text-neutral-600 truncate">
+                                                    <div className="text-xs text-neutral-600 truncate dark:text-neutral-600">
                                                         {optionsLabel(entry.options)}
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-1 shrink-0">
                                                     <button
                                                         type="button"
-                                                        className="rounded-full bg-white px-2 py-1 ring-1 ring-neutral-300 text-xs"
+                                                        className="rounded-full bg-white px-2 py-1 ring-1 ring-neutral-300 text-xs dark:bg-white dark:ring-neutral-300"
                                                         onClick={() => sub(key)}
                                                         aria-label="수량 감소"
                                                     >
@@ -384,7 +384,7 @@ export default function KioskPage() {
                                                     <span className="w-8 text-center text-sm tabular-nums">{entry.qty}</span>
                                                     <button
                                                         type="button"
-                                                        className="rounded-full bg-white px-2 py-1 ring-1 ring-neutral-300 text-xs"
+                                                        className="rounded-full bg-white px-2 py-1 ring-1 ring-neutral-300 text-xs dark:bg-white dark:ring-neutral-300"
                                                         onClick={() => add(key)}
                                                         aria-label="수량 증가"
                                                     >
@@ -392,7 +392,7 @@ export default function KioskPage() {
                                                     </button>
                                                     <button
                                                         type="button"
-                                                        className="ml-1 rounded-full bg-white px-2 py-1 ring-1 ring-red-300 text-xs text-red-600"
+                                                        className="ml-1 rounded-full bg-white px-2 py-1 ring-1 ring-red-300 text-xs text-red-600 dark:bg-white dark:ring-red-300 dark:text-red-600"
                                                         onClick={() => {
                                                             const next = { ...cart };
                                                             delete next[key];
@@ -415,14 +415,14 @@ export default function KioskPage() {
                         <div className="flex gap-2">
                             <button
                                 type="button"
-                                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold ring-1 ring-neutral-300 hover:bg-neutral-100"
+                                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold ring-1 ring-neutral-300 hover:bg-neutral-100 dark:ring-neutral-300 dark:hover:bg-neutral-100"
                                 onClick={() => setCart({})}
                             >
                                 비우기
                             </button>
                             <button
                                 type="button"
-                                className="flex-1 rounded-lg bg-neutral-900 px-4 py-2 text-white shadow hover:bg-neutral-800 disabled:opacity-40 text-sm"
+                                className="flex-1 rounded-lg bg-neutral-900 px-4 py-2 text-white shadow hover:bg-neutral-800 disabled:opacity-40 text-sm dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800"
                                 onClick={() => setIsNameModalVisible(true)}
                                 disabled={Object.keys(cart).length === 0}
                             >
@@ -432,25 +432,25 @@ export default function KioskPage() {
                     </div>
 
                     {/* Tablet/Desktop layout (original style) */}
-                    <div className="hidden md:flex items-start gap-6">
+                    <div className="hidden sm:flex items-start gap-6">
                         <div className="min-w-0 flex-1 max-h-56 overflow-y-auto pr-2">
                             {Object.keys(cart).length === 0 ? (
                                 <p className="truncate text-neutral-500 text-base">선택한 메뉴가 여기에 표시됩니다.</p>
                             ) : (
                                 <ul className="flex flex-col gap-3">
                                     {Object.entries(cart).map(([key, entry]) => (
-                                        <li key={key} className="flex items-center justify-between gap-3 rounded-xl bg-neutral-100 px-4 py-3 text-lg">
+                                        <li key={key} className="flex items-center justify-between gap-3 rounded-xl bg-neutral-100 px-4 py-3 text-lg dark:bg-neutral-100">
                                             <div className="min-w-0">
                                                 <div className="font-semibold truncate">{entry.item.name} × {entry.qty}</div>
                                                 <div className="text-sm text-neutral-600 truncate">{optionsLabel(entry.options)}</div>
                                             </div>
                                             <div className="flex items-center gap-2 shrink-0">
-                                                <button type="button" className="rounded-full bg-white px-3 py-1 ring-1 ring-neutral-300 hover:bg-neutral-50 text-base" onClick={() => sub(key)} aria-label="수량 감소">−</button>
+                                                <button type="button" className="rounded-full bg-white px-3 py-1 ring-1 ring-neutral-300 hover:bg-neutral-50 text-base dark:bg-white dark:ring-neutral-300 dark:hover:bg-neutral-50" onClick={() => sub(key)} aria-label="수량 감소">−</button>
                                                 <span className="w-10 text-center text-lg tabular-nums">{entry.qty}</span>
-                                                <button type="button" className="rounded-full bg-white px-3 py-1 ring-1 ring-neutral-300 hover:bg-neutral-50 text-base" onClick={() => add(key)} aria-label="수량 증가">+</button>
+                                                <button type="button" className="rounded-full bg-white px-3 py-1 ring-1 ring-neutral-300 hover:bg-neutral-50 text-base dark:bg-white dark:ring-neutral-300 dark:hover:bg-neutral-50" onClick={() => add(key)} aria-label="수량 증가">+</button>
                                                 <button
                                                     type="button"
-                                                    className="ml-2 rounded-full bg-white px-3 py-1 ring-1 ring-red-300 hover:bg-red-50 text-base text-red-600"
+                                                    className="ml-2 rounded-full bg-white px-3 py-1 ring-1 ring-red-300 hover:bg-red-50 text-base text-red-600 dark:bg-white dark:ring-red-300 dark:hover:bg-red-50 dark:text-red-600"
                                                     onClick={() => {
                                                         const next = { ...cart };
                                                         delete next[key];
@@ -468,10 +468,10 @@ export default function KioskPage() {
                             )}
                         </div>
                         <div className="flex flex-col gap-2">
-                            <button type="button" className="rounded-xl px-4 py-3 text-sm font-semibold ring-1 ring-neutral-300 hover:bg-neutral-100" onClick={() => setCart({})}>비우기</button>
+                            <button type="button" className="rounded-xl px-4 py-3 text-sm font-semibold ring-1 ring-neutral-300 hover:bg-neutral-100 dark:ring-neutral-300 dark:hover:bg-neutral-100" onClick={() => setCart({})}>비우기</button>
                             <button
                                 type="button"
-                                className="rounded-xl bg-neutral-900 px-5 py-3 text-white shadow text-sm hover:bg-neutral-800 disabled:opacity-40"
+                                className="rounded-xl bg-neutral-900 px-5 py-3 text-white shadow text-sm hover:bg-neutral-800 disabled:opacity-40 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800"
                                 onClick={() => setIsNameModalVisible(true)}
                                 disabled={Object.keys(cart).length === 0}
                             >
@@ -484,15 +484,15 @@ export default function KioskPage() {
 
             {/* Option Modal */}
             {selectedItem && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6">
-                    <div className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl text-2xl max-h-[90vh] overflow-y-auto p-8">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6 dark:bg-black/40">
+                    <div className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl text-2xl max-h-[90vh] overflow-y-auto p-8 dark:bg-white">
                         <div className="mb-6 flex items-center justify-between">
                             <h2 className="text-3xl font-extrabold">{selectedItem.name}</h2>
-                            <button onClick={() => setSelectedItem(null)} className="rounded-full border border-neutral-400 px-4 py-2 text-xl hover:bg-neutral-100">✕</button>
+                            <button onClick={() => setSelectedItem(null)} className="rounded-full border border-neutral-400 px-4 py-2 text-xl hover:bg-neutral-100 dark:border-neutral-400 dark:hover:bg-neutral-100">✕</button>
                         </div>
 
                         {selectedItem.category === "NON_COFFEE" && selectedItem.id !== 'n11' && (
-                            <p className="mb-8 text-xl text-red-600 font-semibold text-center">
+                            <p className="mb-8 text-xl text-red-600 font-semibold text-center dark:text-red-600">
                                 펄 추가시 말씀해주세요 😊
                             </p>
                         )}
@@ -502,10 +502,10 @@ export default function KioskPage() {
                             <div className="mb-8">
                                 <h3 className="mb-3 font-bold">온도</h3>
                                 <div className="flex gap-4 text-xl">
-                                    <button disabled className="px-4 py-3 rounded-xl border bg-neutral-100 text-neutral-500 cursor-not-allowed">HOT</button>
-                                    <button className="px-4 py-3 rounded-xl border bg-neutral-900 text-white">ICE</button>
+                                    <button disabled className="px-4 py-3 rounded-xl border bg-neutral-100 text-neutral-500 cursor-not-allowed dark:bg-neutral-100 dark:text-neutral-500">HOT</button>
+                                    <button className="px-4 py-3 rounded-xl border bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white">ICE</button>
                                 </div>
-                                <p className="mt-2 text-lg text-neutral-500">
+                                <p className="mt-2 text-lg text-neutral-500 dark:text-neutral-500">
                                     {selectedItem.id === "n11" ? "아이스티는 ICE만 가능합니다." : selectedItem.id === "c20" ? "아샷추는 ICE만 가능합니다." : "에이드는 ICE만 가능합니다."}
                                 </p>
                             </div>
@@ -514,7 +514,7 @@ export default function KioskPage() {
                                 <h3 className="mb-3 font-bold">온도</h3>
                                 <div className="flex gap-4 text-xl">
                                     {["HOT", "ICE"].map((t) => (
-                                        <button key={t} onClick={() => setSelectedOptions((o) => ({ ...o, temp: t as Temp }))} className={["px-4 py-3 rounded-xl border", selectedOptions.temp === (t as Temp) ? "bg-neutral-900 text-white" : "bg-white"].join(" ")}>{t}</button>
+                                        <button key={t} onClick={() => setSelectedOptions((o) => ({ ...o, temp: t as Temp }))} className={["px-4 py-3 rounded-xl border", selectedOptions.temp === (t as Temp) ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{t}</button>
                                     ))}
                                 </div>
                             </div>
@@ -525,7 +525,7 @@ export default function KioskPage() {
                                 <h3 className="mb-3 font-bold">얼음량</h3>
                                 <div className="flex gap-4 text-xl">
                                     {["적게", "보통", "많이"].map((lv) => (
-                                        <button key={lv} onClick={() => setSelectedOptions((o) => ({ ...o, ice: lv as IceLevel }))} className={["px-4 py-3 rounded-xl border", selectedOptions.ice === lv ? "bg-neutral-900 text-white" : "bg-white"].join(" ")}>{lv}</button>
+                                        <button key={lv} onClick={() => setSelectedOptions((o) => ({ ...o, ice: lv as IceLevel }))} className={["px-4 py-3 rounded-xl border", selectedOptions.ice === lv ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{lv}</button>
                                     ))}
                                 </div>
                             </div>
@@ -536,7 +536,7 @@ export default function KioskPage() {
                                 <h3 className="mb-3 font-bold">샷</h3>
                                 <div className="flex gap-4 text-xl">
                                     {["적게", "보통", "많이"].map((s) => (
-                                        <button key={s} onClick={() => setSelectedOptions((o) => ({ ...o, coffeeShot: s as CoffeeShot }))} className={["px-4 py-3 rounded-xl border", selectedOptions.coffeeShot === s ? "bg-neutral-900 text-white" : "bg-white"].join(" ")}>{s}</button>
+                                        <button key={s} onClick={() => setSelectedOptions((o) => ({ ...o, coffeeShot: s as CoffeeShot }))} className={["px-4 py-3 rounded-xl border", selectedOptions.coffeeShot === s ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{s}</button>
                                     ))}
                                 </div>
                                 <p className="mt-2 text-lg text-neutral-500">기본값: 보통</p>
@@ -549,16 +549,16 @@ export default function KioskPage() {
                                     <h3 className="mb-3 font-bold">샷</h3>
                                     <div className="flex gap-4 text-xl">
                                         {["없음", "추가"].map((s) => (
-                                            <button key={s} onClick={() => setSelectedOptions((o) => ({ ...o, shotToggle: s as ShotToggle }))} className={["px-4 py-3 rounded-xl border", selectedOptions.shotToggle === s ? "bg-neutral-900 text-white" : "bg-white"].join(" ")}>{s}</button>
+                                            <button key={s} onClick={() => setSelectedOptions((o) => ({ ...o, shotToggle: s as ShotToggle }))} className={["px-4 py-3 rounded-xl border", selectedOptions.shotToggle === s ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{s}</button>
                                         ))}
                                     </div>
-                                    <p className="mt-2 text-lg text-neutral-500">기본값: 없음</p>
+                                    <p className="mt-2 text-lg text-neutral-500 dark:text-neutral-500">기본값: 없음</p>
                                 </div>
                                 <div className="mb-8">
                                     <h3 className="mb-3 font-bold">달기 정도</h3>
                                     <div className="flex gap-4 text-xl">
                                         {["덜 달게", "보통"].map((sw) => (
-                                            <button key={sw} onClick={() => setSelectedOptions((o) => ({ ...o, sweetness: sw as Sweetness }))} className={["px-4 py-3 rounded-xl border", selectedOptions.sweetness === sw ? "bg-neutral-900 text-white" : "bg-white"].join(" ")}>{sw}</button>
+                                            <button key={sw} onClick={() => setSelectedOptions((o) => ({ ...o, sweetness: sw as Sweetness }))} className={["px-4 py-3 rounded-xl border", selectedOptions.sweetness === sw ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{sw}</button>
                                         ))}
                                     </div>
                                     <p className="mt-2 text-lg text-neutral-500">기본값: 보통</p>
@@ -567,8 +567,8 @@ export default function KioskPage() {
                         )}
 
                         <div className="flex justify-end gap-4 mt-8">
-                            <button className="rounded-xl bg-neutral-200 px-6 py-3 text-xl" onClick={() => setSelectedItem(null)}>취소</button>
-                            <button className="rounded-xl bg-neutral-900 px-6 py-3 text-xl text-white" onClick={addToOrder}>장바구니 담기</button>
+                            <button className="rounded-xl bg-neutral-200 px-6 py-3 text-xl dark:bg-neutral-200" onClick={() => setSelectedItem(null)}>취소</button>
+                            <button className="rounded-xl bg-neutral-900 px-6 py-3 text-xl text-white dark:bg-neutral-900 dark:text-white" onClick={addToOrder}>장바구니 담기</button>
                         </div>
                     </div>
                 </div>
@@ -576,25 +576,25 @@ export default function KioskPage() {
 
             {/* 주문자 이름 모달 */}
             {isNameModalVisible && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6">
-                    <div className="w-full max-w-xl rounded-3xl bg-white p-8 shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6 dark:bg-black/50">
+                    <div className="w-full max-w-xl rounded-3xl bg-white p-8 shadow-2xl dark:bg-white">
                         <h2 className="text-3xl font-extrabold mb-6">주문자 이름</h2>
                         <input
                             autoFocus
                             value={customerName}
                             onChange={(e) => setCustomerName(e.target.value)}
                             placeholder="이름을 입력해 주세요"
-                            className="w-full rounded-2xl border border-neutral-300 px-5 py-4 text-2xl outline-none focus:ring-2 focus:ring-neutral-800"
+                            className="w-full rounded-2xl border border-neutral-300 px-5 py-4 text-2xl outline-none focus:ring-2 focus:ring-neutral-800 dark:border-neutral-300 dark:focus:ring-neutral-800"
                         />
                         <div className="mt-8 flex justify-end gap-3">
                             <button
-                                className="rounded-xl bg-neutral-200 px-6 py-3 text-xl"
+                                className="rounded-xl bg-neutral-200 px-6 py-3 text-xl dark:bg-neutral-200"
                                 onClick={() => setIsNameModalVisible(false)}
                             >
                                 취소
                             </button>
                             <button
-                                className="rounded-xl bg-neutral-900 px-6 py-3 text-xl text-white disabled:opacity-40"
+                                className="rounded-xl bg-neutral-900 px-6 py-3 text-xl text-white disabled:opacity-40 dark:bg-neutral-900 dark:text-white"
                                 disabled={!customerName.trim()}
                                 onClick={() => {
                                     if (!customerName.trim()) return;
@@ -611,26 +611,26 @@ export default function KioskPage() {
 
             {/* 계좌 안내 모달 */}
             {isAccountModalVisible && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6">
-                    <div className="w-full max-w-xl rounded-3xl bg-white p-8 shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6 dark:bg-black/50">
+                    <div className="w-full max-w-xl rounded-3xl bg-white p-8 shadow-2xl dark:bg-white">
                         <h2 className="text-3xl font-extrabold mb-2">계좌번호 안내</h2>
-                        <p className="text-xl text-neutral-700">카카오뱅크</p>
+                        <p className="text-xl text-neutral-700 dark:text-neutral-700">카카오뱅크</p>
                         <div className="mt-2 flex items-center gap-3">
-                            <code className="rounded-xl bg-neutral-100 px-4 py-3 text-2xl tracking-wider">3333-28-2011668</code>
+                            <code className="rounded-xl bg-neutral-100 px-4 py-3 text-2xl tracking-wider dark:bg-neutral-100">3333-28-2011668</code>
                             <span className="text-xl">(이상하)</span>
 
                         </div>
-                        <p className="mt-4 text-lg text-neutral-600">입금해주세요. 후원해주신 금액은 선교 후원에 쓰입니다.</p>
+                        <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-600">입금해주세요. 후원해주신 금액은 선교 후원에 쓰입니다.</p>
 
                         <div className="mt-8 flex justify-end gap-3">
                             <button
-                                className="rounded-xl bg-neutral-200 px-6 py-3 text-xl"
+                                className="rounded-xl bg-neutral-200 px-6 py-3 text-xl dark:bg-neutral-200"
                                 onClick={() => setIsAccountModalVisible(false)}
                             >
                                 닫기
                             </button>
                             <button
-                                className="rounded-xl bg-neutral-900 px-6 py-3 text-xl text-white disabled:opacity-40"
+                                className="rounded-xl bg-neutral-900 px-6 py-3 text-xl text-white disabled:opacity-40 dark:bg-neutral-900 dark:text-white"
                                 disabled={isSubmitting}
                                 onClick={submitOrder}
                             >
@@ -642,14 +642,14 @@ export default function KioskPage() {
             )}
             {/* 주문 완료 모달 */}
             {isCompleteVisible && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6">
-                    <div className="w-full max-w-md rounded-3xl bg-white p-10 shadow-2xl text-center">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6 dark:bg-black/40">
+                    <div className="w-full max-w-md rounded-3xl bg-white p-10 shadow-2xl text-center dark:bg-white">
                         <div className="text-5xl mb-4">✅</div>
                         <h3 className="text-2xl font-bold mb-2">주문 완료되었습니다</h3>
                         <p className="text-neutral-600">주문이 접수되었습니다. 감사합니다!</p>
                         <div className="mt-6">
                             <button
-                                className="rounded-xl bg-neutral-900 px-6 py-3 text-white"
+                                className="rounded-xl bg-neutral-900 px-6 py-3 text-white dark:bg-neutral-900 dark:text-white"
                                 onClick={() => setIsCompleteVisible(false)}
                             >
                                 확인
