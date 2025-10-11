@@ -146,7 +146,7 @@ export default function BO() {
             {/* Header */}
             <header className="sticky top-0 z-10 flex items-center justify-between border-b border-[#eae6de] bg-white px-5 py-3.5">
                 <div className="flex items-center gap-2.5">
-                    <h1 className="text-[22px] font-extrabold">은혜카페 • 주문관리</h1>
+                    <h1 className="text-[22px] font-extrabold text-black">은혜카페 • 주문관리</h1>
                     <span className="rounded-full border border-[#e6e1d6] bg-[#f3f0ea] px-2 py-0.5 text-[13px]">
             대기 {Object.keys(grouped).length}건
           </span>
@@ -162,39 +162,66 @@ export default function BO() {
             </header>
 
             {/* Menu Control Panel */}
+            {/* Menu Control Panel */}
             {menuOpen && (
-                <section className="border-b border-[#eae6de] bg-white">
+                <section className="border-b border-[#eae6de] bg-white text-black">
                     <div className="px-5 py-3.5">
                         <h2 className="mb-2 text-lg font-extrabold">메뉴 사용여부</h2>
-                        <div className="overflow-x-auto">
-                            <table className="min-w-[560px] w-full border-collapse text-[14px]">
-                                <thead>
-                                <tr className="text-left">
-                                    <th className="border-b border-[#eee7da] px-3 py-2">메뉴명</th>
-                                    <th className="border-b border-[#eee7da] px-3 py-2">사용</th>
-                                </tr>
-                                </thead>
-                                <tbody>
+
+                        {/* ✅ 모바일: 카드형 리스트 (스크롤 없음) */}
+                        <div className="md:hidden">
+                            <ul className="divide-y divide-[#eee7da]">
                                 {menus.map((menu, index) => (
-                                    <tr key={menu.ID ?? index}>
-                                        <td className="border-b border-[#eee7da] px-3 py-2">{menu.NAME}</td>
-                                        <td className="border-b border-[#eee7da] px-3 py-2">
-                                            {/* Toggle */}
-                                            <label className="relative inline-flex cursor-pointer items-center">
-                                                <input
-                                                    type="checkbox"
-                                                    className="peer sr-only"
-                                                    checked={menu.USE_YN === 'Y'}
-                                                    onChange={() => toggleUseYN(menu, index)}
-                                                />
-                                                <div className="h-6 w-11 rounded-full bg-[#ddd6c8] transition-colors peer-checked:bg-neutral-900" />
-                                                <div className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition-transform peer-checked:translate-x-5" />
-                                            </label>
-                                        </td>
-                                    </tr>
+                                    <li key={menu.ID ?? index} className="flex items-center justify-between py-3">
+                                        <span className="pr-3 text-[15px] leading-snug truncate">{menu.NAME}</span>
+                                        {/* Toggle */}
+                                        <label className="relative inline-flex cursor-pointer items-center">
+                                            <input
+                                                type="checkbox"
+                                                className="peer sr-only"
+                                                checked={menu.USE_YN === 'Y'}
+                                                onChange={() => toggleUseYN(menu, index)}
+                                            />
+                                            <div className="h-6 w-11 rounded-full bg-[#ddd6c8] transition-colors peer-checked:bg-neutral-900" />
+                                            <div className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition-transform peer-checked:translate-x-5" />
+                                        </label>
+                                    </li>
                                 ))}
-                                </tbody>
-                            </table>
+                            </ul>
+                        </div>
+
+                        {/* ✅ 데스크탑: 기존 테이블 유지 */}
+                        <div className="hidden md:block">
+                            <div className="overflow-x-auto">
+                                <table className="min-w-[560px] w-full border-collapse text-[14px]">
+                                    <thead>
+                                    <tr className="text-left">
+                                        <th className="border-b border-[#eee7da] px-3 py-2">메뉴명</th>
+                                        <th className="border-b border-[#eee7da] px-3 py-2">사용</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {menus.map((menu, index) => (
+                                        <tr key={menu.ID ?? index}>
+                                            <td className="border-b border-[#eee7da] px-3 py-2">{menu.NAME}</td>
+                                            <td className="border-b border-[#eee7da] px-3 py-2">
+                                                {/* Toggle */}
+                                                <label className="relative inline-flex cursor-pointer items-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="peer sr-only"
+                                                        checked={menu.USE_YN === 'Y'}
+                                                        onChange={() => toggleUseYN(menu, index)}
+                                                    />
+                                                    <div className="h-6 w-11 rounded-full bg-[#ddd6c8] transition-colors peer-checked:bg-neutral-900" />
+                                                    <div className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition-transform peer-checked:translate-x-5" />
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </section>

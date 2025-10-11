@@ -491,6 +491,12 @@ export default function KioskPage() {
                             <button onClick={() => setSelectedItem(null)} className="rounded-full border border-neutral-400 px-4 py-2 text-xl hover:bg-neutral-100">✕</button>
                         </div>
 
+                        {selectedItem.category === "NON_COFFEE" && selectedItem.id !== 'n11' && (
+                            <p className="mb-8 text-xl text-red-600 font-semibold text-center">
+                                펄 추가시 말씀해주세요 😊
+                            </p>
+                        )}
+
                         {/* Temperature / ADE ICE only */}
                         {selectedItem.id === "n11" || selectedItem.id === "c20" || selectedItem.category === "ADE" ? (
                             <div className="mb-8">
