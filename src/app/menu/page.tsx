@@ -320,13 +320,13 @@ export default function KioskPage() {
 
             {/* Grid (3 columns) */}
             <div className="mx-auto max-w-5xl px-4 md:px-6 pb-40 md:pb-56">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-6 sm:gap-5">
                     {filtered.map((item) => (
                         <button
                             key={item.id}
                             onClick={() => onMenuClick(item)} disabled={item.soldOut}
                             className={[
-                                "group relative rounded-2xl bg-white p-4 md:p-5 shadow-md ring-1 ring-neutral-200 transition hover:shadow-lg dark:bg-white dark:ring-neutral-200",
+                                "group relative rounded-2xl bg-white p-4 sm:p-5 shadow-md ring-1 ring-neutral-200 transition hover:shadow-lg dark:bg-white dark:ring-neutral-200",
                                 item.soldOut ? "opacity-60 grayscale cursor-not-allowed hover:shadow-md" : ""
                             ].join(" ")}
                             aria-disabled={item.soldOut || undefined}
@@ -353,8 +353,8 @@ export default function KioskPage() {
 
             {/* Bottom cart area */}
             <div className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/95 backdrop-blur dark:border-neutral-200 dark:bg-white/95">
+                {/* Mobile layout (stack) */}
                 <div className="mx-auto max-w-5xl px-4 py-4">
-                    {/* Mobile layout (stack) */}
                     <div className="sm:hidden space-y-3">
                         <div className="max-h-56 overflow-y-auto pr-1">
                             {Object.keys(cart).length === 0 ? (
@@ -430,9 +430,10 @@ export default function KioskPage() {
                             </button>
                         </div>
                     </div>
-
-                    {/* Tablet/Desktop layout (original style) */}
-                    <div className="hidden sm:flex items-start gap-6">
+                </div>
+                {/* Tablet/Desktop layout (original style) */}
+                <div className="mx-auto max-w-5xl px-4 pt-4 pb-4 sm:pt-4 sm:pb-10 md:pt-4 md:pb-12">
+                    <div className="hidden sm:flex items-start gap-6 sm:-translate-y-1 md:-translate-y-4">
                         <div className="min-w-0 flex-1 max-h-56 overflow-y-auto pr-2">
                             {Object.keys(cart).length === 0 ? (
                                 <p className="truncate text-neutral-500 text-base">선택한 메뉴가 여기에 표시됩니다.</p>
@@ -468,10 +469,10 @@ export default function KioskPage() {
                             )}
                         </div>
                         <div className="flex flex-col gap-2">
-                            <button type="button" className="rounded-xl px-4 py-3 text-sm font-semibold ring-1 ring-neutral-300 hover:bg-neutral-100 dark:ring-neutral-300 dark:hover:bg-neutral-100" onClick={() => setCart({})}>비우기</button>
+                            <button type="button" className="rounded-xl px-4 py-3 text-lg-600 font-semibold ring-1 ring-neutral-300 hover:bg-neutral-100 dark:ring-neutral-300 dark:hover:bg-neutral-100" onClick={() => setCart({})}>비우기</button>
                             <button
                                 type="button"
-                                className="rounded-xl bg-neutral-900 px-5 py-3 text-white shadow text-sm hover:bg-neutral-800 disabled:opacity-40 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800"
+                                className="rounded-xl bg-neutral-900 px-5 py-3 text-white shadow text-lg-600 hover:bg-neutral-800 disabled:opacity-40 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800"
                                 onClick={() => setIsNameModalVisible(true)}
                                 disabled={Object.keys(cart).length === 0}
                             >
