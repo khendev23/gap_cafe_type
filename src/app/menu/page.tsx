@@ -281,73 +281,79 @@ export default function KioskPage() {
     };
 
     return (
-        <main className="min-h-screen bg-amber-50 text-neutral-900 text-xl dark:bg-amber-50 dark:text-neutral-900"
+        <main className="min-h-screen bg-amber-50 text-neutral-900 text-xl dark:bg-amber-50 dark:text-neutral-900 flex flex-col min-h-0"
               style={{
                   pointerEvents: isIdleVisible ? 'none' : 'auto',
                   userSelect: isIdleVisible ? 'none' : 'auto',
                   touchAction: isIdleVisible ? 'none' : 'auto',
               }}
         >
-            {/* Top bar */}
-            <div className="mx-auto max-w-5xl px-6 pt-6 pb-3">
-                <div className="flex items-center justify-between">
-                    <h1 className="text-3xl font-bold tracking-tight">은혜카페</h1>
-                    {/* ✅ 새로고침 버튼 */}
-                    <button
-                        type="button"
-                        onClick={handleRefreshMenus}
-                        disabled={!ipAddress || isRefreshing}
-                        title="메뉴 리로드"
-                        className="rounded-xl bg-white px-4 py-2 text-base font-semibold ring-1 ring-neutral-300 hover:bg-neutral-100 disabled:opacity-40 dark:bg-white dark:ring-neutral-300 dark:hover:bg-neutral-100"
-                    >
-                        {isRefreshing ? "새로고침 중..." : "새로고침"}
-                    </button>
-                </div>
-                <div className="mt-4 md:mt-6 flex gap-2 md:gap-4">
-                    {CATEGORIES.map((c) => (
-                        <button
-                            key={c.key}
-                            onClick={() => setActive(c.key)}
-                            className={["rounded-xl px-4 py-2 text-base md:text-xl font-bold shadow-sm",
-                                active === c.key ? "bg-white ring-2 ring-neutral-800 dark:bg-white dark:ring-neutral-800" : "bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-100 dark:hover:bg-neutral-200"
-                            ].join(" ")}
-                        >
-                            {c.label}
-                        </button>
-                    ))}
+            {/* Top bar (full-width sticky wrapper + centered inner) */}
+            <div className="sticky top-0 z-30">
+                <div className="w-full bg-amber-50/95 dark:bg-amber-50/95 backdrop-blur border-b border-neutral-200">
+                    <div className="mx-auto max-w-5xl px-6 pt-6 pb-3">
+                        <div className="flex items-center justify-between">
+                            <h1 className="text-3xl font-bold tracking-tight">은혜카페</h1>
+                            {/* ✅ 새로고침 버튼 */}
+                            <button
+                                type="button"
+                                onClick={handleRefreshMenus}
+                                disabled={!ipAddress || isRefreshing}
+                                title="메뉴 리로드"
+                                className="rounded-xl bg-white px-4 py-2 text-base font-semibold ring-1 ring-neutral-300 hover:bg-neutral-100 disabled:opacity-40 dark:bg-white dark:ring-neutral-300 dark:hover:bg-neutral-100"
+                            >
+                                {isRefreshing ? "새로고침 중..." : "새로고침"}
+                            </button>
+                        </div>
+                        <div className="mt-4 md:mt-6 flex gap-2 md:gap-4">
+                            {CATEGORIES.map((c) => (
+                                <button
+                                    key={c.key}
+                                    onClick={() => setActive(c.key)}
+                                    className={["rounded-xl px-4 py-2 text-base md:text-xl font-bold shadow-sm",
+                                        active === c.key ? "bg-white ring-2 ring-neutral-800 dark:bg-white dark:ring-neutral-800" : "bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-100 dark:hover:bg-neutral-200"
+                                    ].join(" ")}
+                                >
+                                    {c.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
 
             {/* Grid (3 columns) */}
-            <div className="mx-auto max-w-5xl px-4 md:px-6 pb-40 md:pb-56">
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-6 sm:gap-5">
-                    {filtered.map((item) => (
-                        <button
-                            key={item.id}
-                            onClick={() => onMenuClick(item)} disabled={item.soldOut}
-                            className={[
-                                "group relative rounded-2xl bg-white p-4 sm:p-5 shadow-md ring-1 ring-neutral-200 transition hover:shadow-lg dark:bg-white dark:ring-neutral-200",
-                                item.soldOut ? "opacity-60 grayscale cursor-not-allowed hover:shadow-md" : ""
-                            ].join(" ")}
-                            aria-disabled={item.soldOut || undefined}
-                            title={item.soldOut ? "품절" : undefined}
-                        >
-                            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl">
-                                <Image src={item.imageDataUrl || demoImg(item.name)} alt={item.name} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 320px" quality={70} className="object-contain" />
-                                {/* ✅ 품절 오버레이 */}
-                                {item.soldOut && (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-black/35 dark:bg-black/35">
-                                        <span className="rounded-xl bg-white px-4 py-2 text-xl font-bold text-neutral-900 shadow dark:bg-white dark:ring-neutral-900">
-                                          품절
-                                        </span>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="mt-4 text-center">
-                                <OverflowMarquee>{item.name}</OverflowMarquee>
-                            </div>
-                        </button>
-                    ))}
+            <div className="flex-1 min-h-0">
+                <div className="mx-auto max-w-5xl px-4 md:px-6 pb-40 md:pb-56 flex-1 overflow-y-auto overscroll-contain">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-6 sm:gap-5">
+                        {filtered.map((item) => (
+                            <button
+                                key={item.id}
+                                onClick={() => onMenuClick(item)} disabled={item.soldOut}
+                                className={[
+                                    "group relative rounded-2xl bg-white p-4 sm:p-5 shadow-md ring-1 ring-neutral-200 transition hover:shadow-lg dark:bg-white dark:ring-neutral-200",
+                                    item.soldOut ? "opacity-60 grayscale cursor-not-allowed hover:shadow-md" : ""
+                                ].join(" ")}
+                                aria-disabled={item.soldOut || undefined}
+                                title={item.soldOut ? "품절" : undefined}
+                            >
+                                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl">
+                                    <Image src={item.imageDataUrl || demoImg(item.name)} alt={item.name} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 320px" quality={70} className="object-contain" />
+                                    {/* ✅ 품절 오버레이 */}
+                                    {item.soldOut && (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-black/35 dark:bg-black/35">
+                                            <span className="rounded-xl bg-white px-4 py-2 text-xl font-bold text-neutral-900 shadow dark:bg-white dark:ring-neutral-900">
+                                              품절
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="mt-4 text-center">
+                                    <OverflowMarquee>{item.name}</OverflowMarquee>
+                                </div>
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
