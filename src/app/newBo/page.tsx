@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
+import { fromZonedTime, formatInTimeZone } from 'date-fns-tz';
+
 
 type Category = 'COFFEE' | 'NON_COFFEE' | 'ADE' | 'TEA';
 
@@ -137,21 +139,18 @@ export default function BO() {
     const formatHm = (val?: string) => {
         if (!val) return '';
 
-        // 공백 구분을 ISO 형태로 변환
-        const base = val.includes('T') ? val : val.replace(' ', 'T');
+        // 1) 타임존 포함 여부 감지
+        const hasTZ = /([zZ])|([+\-]\d{2}:?\d{2})$/.test(val) || val.includes('T');
 
-        // 타임존 오프셋/UTC 표기가 없으면 KST로 간주(+09:00)
-        const hasTZ = /([zZ])|([+\-]\d{2}:?\d{2})$/.test(base);
-        const isoKst = hasTZ ? base : `${base}+09:00`;
+        // 2) UTC 인스턴트 만들기
+        // - 타임존이 이미 붙어있으면 그대로 Date로 파싱
+        // - 타임존이 없으면 "Asia/Seoul"로 해석 후 UTC로 변환
+        const utcInstant = hasTZ
+            ? new Date(val.replace(' ', 'T')) // 예: "2025-10-26 13:23:12" -> "2025-10-26T13:23:12"
+            : fromZonedTime(val, 'Asia/Seoul'); // "KST로 해석" → UTC 인스턴트
 
-        // Asia/Seoul로 포맷 (어떤 기기 타임존이든 KST로 고정 표기)
-        const d = new Date(isoKst);
-        return new Intl.DateTimeFormat('ko-KR', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-            timeZone: 'Asia/Seoul',
-        }).format(d);
+        // 3) 표시: 어떤 기기/서버든 KST로 고정
+        return formatInTimeZone(utcInstant, 'Asia/Seoul', 'HH:mm');
     };
 
     return (

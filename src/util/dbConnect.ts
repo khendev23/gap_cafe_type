@@ -25,6 +25,7 @@ function createPoolFromEnv(prefix: "LOCAL" | "REMOTE"): Pool {
         waitForConnections: true,
         connectionLimit: 10,
         queueLimit: 0,
+        dateStrings: true,
     });
 }
 
