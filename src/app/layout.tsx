@@ -20,22 +20,24 @@ export const metadata: Metadata = {
     description: "은혜카페 키오스크",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-      <html lang="en">
-        <head>
-          {/* 라이트모드만 사용 선언 */}
-            <meta name="color-scheme" content="light" />
-        </head>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          {children}
-        </body>
-    </html>
-  );
+export default function RootLayout(
+    {
+        children,
+    }: Readonly<{
+        children: React.ReactNode;
+    }>
+) {
+    return (
+        <html lang="en">
+            <head>
+                {/* 라이트모드만 사용 선언 */}
+                <meta name="color-scheme" content="light" />
+            </head>
+            <body
+                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            >
+                {children}
+            </body>
+        </html>
+    );
 }
