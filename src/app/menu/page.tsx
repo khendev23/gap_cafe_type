@@ -491,15 +491,15 @@ export default function KioskPage() {
 
             {/* Option Modal */}
             {selectedItem && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6 dark:bg-black/40">
-                    <div className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl text-2xl max-h-[90vh] overflow-y-auto p-8 dark:bg-white">
-                        <div className="mb-6 flex items-center justify-between">
-                            <h2 className="text-3xl font-extrabold">{selectedItem.name}</h2>
-                            <button onClick={() => setSelectedItem(null)} className="rounded-full border border-neutral-400 px-4 py-2 text-xl hover:bg-neutral-100 dark:border-neutral-400 dark:hover:bg-neutral-100">✕</button>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 sm:p-6 dark:bg-black/40">
+                    <div className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl text-lg sm:text-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 dark:bg-white">
+                        <div className="mb-4 sm:mb-6 flex items-center justify-between">
+                            <h2 className="text-2xl sm:text-3xl font-extrabold">{selectedItem.name}</h2>
+                            <button onClick={() => setSelectedItem(null)} className="rounded-full border border-neutral-400 px-4 py-2 text-lg sm:text-xl hover:bg-neutral-100 dark:border-neutral-400 dark:hover:bg-neutral-100">✕</button>
                         </div>
 
                         {selectedItem.category === "NON_COFFEE" && selectedItem.id !== 'n11' && (
-                            <p className="mb-8 text-xl text-red-600 font-semibold text-center dark:text-red-600">
+                            <p className="mb-8 text-lg sm:text-xl text-red-600 font-semibold text-center dark:text-red-600">
                                 펄 추가시 말씀해주세요 😊
                             </p>
                         )}
@@ -508,18 +508,18 @@ export default function KioskPage() {
                         {selectedItem.id === "n11" || selectedItem.id === "c20" || selectedItem.category === "ADE" ? (
                             <div className="mb-8">
                                 <h3 className="mb-3 font-bold">온도</h3>
-                                <div className="flex gap-4 text-xl">
+                                <div className="flex gap-4 text-lg sm:text-xl">
                                     <button disabled className="px-4 py-3 rounded-xl border bg-neutral-100 text-neutral-500 cursor-not-allowed dark:bg-neutral-100 dark:text-neutral-500">HOT</button>
                                     <button className="px-4 py-3 rounded-xl border bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white">ICE</button>
                                 </div>
-                                <p className="mt-2 text-lg text-neutral-500 dark:text-neutral-500">
+                                <p className="mt-2 text-base sm:text-lg text-neutral-500 dark:text-neutral-500">
                                     {selectedItem.id === "n11" ? "아이스티는 ICE만 가능합니다." : selectedItem.id === "c20" ? "아샷추는 ICE만 가능합니다." : "에이드는 ICE만 가능합니다."}
                                 </p>
                             </div>
                         ) : (
                             <div className="mb-8">
                                 <h3 className="mb-3 font-bold">온도</h3>
-                                <div className="flex gap-4 text-xl">
+                                <div className="flex gap-4 text-lg sm:text-xl">
                                     {["HOT", "ICE"].map((t) => (
                                         <button key={t} onClick={() => setSelectedOptions((o) => ({ ...o, temp: t as Temp }))} className={["px-4 py-3 rounded-xl border", selectedOptions.temp === (t as Temp) ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{t}</button>
                                     ))}
@@ -530,7 +530,7 @@ export default function KioskPage() {
                         {(selectedItem.category === "ADE" || selectedOptions.temp === "ICE") && (
                             <div className="mb-8">
                                 <h3 className="mb-3 font-bold">얼음량</h3>
-                                <div className="flex gap-4 text-xl">
+                                <div className="flex gap-4 text-lg sm:text-xl">
                                     {["적게", "보통", "많이"].map((lv) => (
                                         <button key={lv} onClick={() => setSelectedOptions((o) => ({ ...o, ice: lv as IceLevel }))} className={["px-4 py-3 rounded-xl border", selectedOptions.ice === lv ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{lv}</button>
                                     ))}
@@ -541,12 +541,12 @@ export default function KioskPage() {
                         {selectedItem.category === "COFFEE" && (
                             <div className="mb-8">
                                 <h3 className="mb-3 font-bold">샷</h3>
-                                <div className="flex gap-4 text-xl">
+                                <div className="flex gap-4 text-lg sm:text-xl">
                                     {["적게", "보통", "많이"].map((s) => (
                                         <button key={s} onClick={() => setSelectedOptions((o) => ({ ...o, coffeeShot: s as CoffeeShot }))} className={["px-4 py-3 rounded-xl border", selectedOptions.coffeeShot === s ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{s}</button>
                                     ))}
                                 </div>
-                                <p className="mt-2 text-lg text-neutral-500">기본값: 보통</p>
+                                <p className="mt-2 text-base sm:text-lg text-neutral-500">기본값: 보통</p>
                             </div>
                         )}
 
@@ -554,28 +554,28 @@ export default function KioskPage() {
                             <>
                                 <div className="mb-8">
                                     <h3 className="mb-3 font-bold">샷</h3>
-                                    <div className="flex gap-4 text-xl">
+                                    <div className="flex gap-4 text-lg sm:text-xl">
                                         {["없음", "추가"].map((s) => (
                                             <button key={s} onClick={() => setSelectedOptions((o) => ({ ...o, shotToggle: s as ShotToggle }))} className={["px-4 py-3 rounded-xl border", selectedOptions.shotToggle === s ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{s}</button>
                                         ))}
                                     </div>
-                                    <p className="mt-2 text-lg text-neutral-500 dark:text-neutral-500">기본값: 없음</p>
+                                    <p className="mt-2 text-base sm:text-lg text-neutral-500 dark:text-neutral-500">기본값: 없음</p>
                                 </div>
                                 <div className="mb-8">
                                     <h3 className="mb-3 font-bold">달기 정도</h3>
-                                    <div className="flex gap-4 text-xl">
+                                    <div className="flex gap-4 text-lg sm:text-xl">
                                         {["덜 달게", "보통"].map((sw) => (
                                             <button key={sw} onClick={() => setSelectedOptions((o) => ({ ...o, sweetness: sw as Sweetness }))} className={["px-4 py-3 rounded-xl border", selectedOptions.sweetness === sw ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{sw}</button>
                                         ))}
                                     </div>
-                                    <p className="mt-2 text-lg text-neutral-500">기본값: 보통</p>
+                                    <p className="mt-2 text-base sm:text-lg text-neutral-500">기본값: 보통</p>
                                 </div>
                             </>
                         )}
 
                         <div className="flex justify-end gap-4 mt-8">
-                            <button className="rounded-xl bg-neutral-200 px-6 py-3 text-xl dark:bg-neutral-200" onClick={() => setSelectedItem(null)}>취소</button>
-                            <button className="rounded-xl bg-neutral-900 px-6 py-3 text-xl text-white dark:bg-neutral-900 dark:text-white" onClick={addToOrder}>장바구니 담기</button>
+                            <button className="rounded-xl bg-neutral-200 px-6 py-3 text-lg sm:text-xl dark:bg-neutral-200" onClick={() => setSelectedItem(null)}>취소</button>
+                            <button className="rounded-xl bg-neutral-900 px-6 py-3 text-lg sm:text-xl text-white dark:bg-neutral-900 dark:text-white" onClick={addToOrder}>장바구니 담기</button>
                         </div>
                     </div>
                 </div>
@@ -585,23 +585,23 @@ export default function KioskPage() {
             {isNameModalVisible && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6 dark:bg-black/50">
                     <div className="w-full max-w-xl rounded-3xl bg-white p-8 shadow-2xl dark:bg-white">
-                        <h2 className="text-3xl font-extrabold mb-6">주문자 이름</h2>
+                        <h2 className="text-2xl sm:text-3xl font-extrabold mb-6">주문자 이름</h2>
                         <input
                             autoFocus
                             value={customerName}
                             onChange={(e) => setCustomerName(e.target.value)}
                             placeholder="이름을 입력해 주세요"
-                            className="w-full rounded-2xl border border-neutral-300 px-5 py-4 text-2xl outline-none focus:ring-2 focus:ring-neutral-800 dark:border-neutral-300 dark:focus:ring-neutral-800"
+                            className="w-full rounded-2xl border border-neutral-300 px-5 py-4 text-xl sm:text-2xl outline-none focus:ring-2 focus:ring-neutral-800 dark:border-neutral-300 dark:focus:ring-neutral-800"
                         />
                         <div className="mt-8 flex justify-end gap-3">
                             <button
-                                className="rounded-xl bg-neutral-200 px-6 py-3 text-xl dark:bg-neutral-200"
+                                className="rounded-xl bg-neutral-200 px-6 py-3 text-lg sm:text-xl dark:bg-neutral-200"
                                 onClick={() => setIsNameModalVisible(false)}
                             >
                                 취소
                             </button>
                             <button
-                                className="rounded-xl bg-neutral-900 px-6 py-3 text-xl text-white disabled:opacity-40 dark:bg-neutral-900 dark:text-white"
+                                className="rounded-xl bg-neutral-900 px-6 py-3 text-lg sm:text-xl text-white disabled:opacity-40 dark:bg-neutral-900 dark:text-white"
                                 disabled={!customerName.trim()}
                                 onClick={() => {
                                     if (!customerName.trim()) return;
@@ -620,24 +620,24 @@ export default function KioskPage() {
             {isAccountModalVisible && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6 dark:bg-black/50">
                     <div className="w-full max-w-xl rounded-3xl bg-white p-8 shadow-2xl dark:bg-white">
-                        <h2 className="text-3xl font-extrabold mb-2">계좌번호 안내</h2>
-                        <p className="text-xl text-neutral-700 dark:text-neutral-700">카카오뱅크</p>
+                        <h2 className="text-2xl sm:text-3xl font-extrabold mb-2">계좌번호 안내</h2>
+                        <p className="text-lg sm:text-xl text-neutral-700 dark:text-neutral-700">카카오뱅크</p>
                         <div className="mt-2 flex items-center gap-3">
-                            <code className="rounded-xl bg-neutral-100 px-4 py-3 text-2xl tracking-wider dark:bg-neutral-100">3333-28-2011668</code>
-                            <span className="text-xl">(이상하)</span>
+                            <code className="rounded-xl bg-neutral-100 px-4 py-3 text-lg sm:text-2xl tracking-wider dark:bg-neutral-100">3333-28-2011668</code>
+                            <span className="text-lg sm:text-xl">(이상하)</span>
 
                         </div>
-                        <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-600">입금해주세요. 후원해주신 금액은 선교 후원에 쓰입니다.</p>
+                        <p className="mt-4 text-base sm:text-lg text-neutral-600 dark:text-neutral-600">입금해주세요. 후원해주신 금액은 선교 후원에 쓰입니다.</p>
 
                         <div className="mt-8 flex justify-end gap-3">
                             <button
-                                className="rounded-xl bg-neutral-200 px-6 py-3 text-xl dark:bg-neutral-200"
+                                className="rounded-xl bg-neutral-200 px-6 py-3 text-lg sm:text-xl dark:bg-neutral-200"
                                 onClick={() => setIsAccountModalVisible(false)}
                             >
                                 닫기
                             </button>
                             <button
-                                className="rounded-xl bg-neutral-900 px-6 py-3 text-xl text-white disabled:opacity-40 dark:bg-neutral-900 dark:text-white"
+                                className="rounded-xl bg-neutral-900 px-6 py-3 text-lg sm:text-xl text-white disabled:opacity-40 dark:bg-neutral-900 dark:text-white"
                                 disabled={isSubmitting}
                                 onClick={submitOrder}
                             >
@@ -651,8 +651,8 @@ export default function KioskPage() {
             {isCompleteVisible && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6 dark:bg-black/40">
                     <div className="w-full max-w-md rounded-3xl bg-white p-10 shadow-2xl text-center dark:bg-white">
-                        <div className="text-5xl mb-4">✅</div>
-                        <h3 className="text-2xl font-bold mb-2">주문 완료되었습니다</h3>
+                        <div className="text-4xl sm:text-5xl mb-4">✅</div>
+                        <h3 className="text-xl sm:text-2xl font-bold mb-2">주문 완료되었습니다</h3>
                         <p className="text-neutral-600">주문이 접수되었습니다. 감사합니다!</p>
                         <div className="mt-6">
                             <button
