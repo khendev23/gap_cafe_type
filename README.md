@@ -72,7 +72,7 @@ npm install
 npm run dev
 ```
 
-# API 개요
+## API 개요
 | Method   | Endpoint             | 설명           |
 |----------|----------------------|--------------|
 | GET      | /api/menus           | 메뉴 목록 조회     |
@@ -82,18 +82,18 @@ npm run dev
 | POST     | /api/new_orders/complete_order          | 주문 완료 처리     |
 | POST     | /api/menus/updateMenuUseYn          | 메뉴 제어        |
 
-# Polling 전략
+## Polling 전략
 - 기본 주기: 2000ms
 - 선택 이유: 운영 환경(NAS)에서 구현 단순성, 안정성 우선
   - 웹소켓 선택시 별도 웹소켓 서버 필요
   - 현재 사용 트래픽 기준 웹소켓 보다 polling이 비용 절감 효과 있음
 
-# 향후 개선
+## 향후 개선
 - 주문 통계 / 대시보드
 - 메뉴 간편 등록
 - 고객 이벤트 추가(n번째 주문시 무료 음료 등)
 
-# 정보(Author)
+## 정보(Author)
 - Developer: 유성근
 - Email: khendev23@gmail.com
 - Github: https://github.com/khendev23
