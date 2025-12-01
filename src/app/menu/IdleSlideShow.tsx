@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import axios from "axios";
 
 type Props = {
     ipAddress: string;
@@ -15,17 +16,25 @@ export default function IdleSlideshow({ ipAddress, onActive, onIdle, visible }: 
     const slideshowTimerRef = useRef<NodeJS.Timeout | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);
 
-    const isInternal = ipAddress.startsWith('49.');
-    const baseURL = isInternal ? 'http://192.168.219.177' : 'https://cdn.jsdelivr.net/gh/khendev23/gapCdn-assets@main';
+    const [idleImages, setIdleImages] = useState<any[]>([]);
 
-    const slideImages = [
-        // `${baseURL}/kelly/IMG_9459.jpeg`,
-        // `${baseURL}/kelly/IMG_9460.jpeg`,
-        // `${baseURL}/kelly/IMG_9461.jpeg`,
-        // `${baseURL}/kelly/kelly240603.jpg`,
-        // `${baseURL}/kelly/kelly240701.jpg`,
-        `${baseURL}/kelly/orchestra.jpg`,
-    ];
+    const isInternal = ipAddress.startsWith('49.');
+
+    useEffect(() => {
+        if (!ipAddress) return;
+        void fetchIdle();
+    }, [ipAddress]);
+
+    // DB에서 idle 조회
+    const fetchIdle = async () => {
+        try {
+            const idleRes = await axios.post("/api/idle", { ipAddress });
+            setIdleImages(Array.isArray(idleRes.data) ? idleRes.data : []);
+        } catch (err) {
+            console.error("메뉴 불러오기 실패:", err);
+            setIdleImages([]);
+        }
+    };
 
     const enterIdleMode = () => {
         setIsIdle(true);
@@ -76,14 +85,14 @@ export default function IdleSlideshow({ ipAddress, onActive, onIdle, visible }: 
         }
 
         // 이미지가 1장이면 슬라이드 없이 첫 장만 보여줌
-        if (slideImages.length <= 1) {
+        if (idleImages.length <= 1) {
             setCurrentSlideIndex(0);
             return;
         }
 
         // 이미지가 2장 이상일 때만 슬라이드 타이머 동작
         slideshowTimerRef.current = setInterval(() => {
-            setCurrentSlideIndex((prev) => (prev + 1) % slideImages.length);
+            setCurrentSlideIndex((prev) => (prev + 1) % idleImages.length);
         }, 8000);
 
         // cleanup
@@ -93,7 +102,7 @@ export default function IdleSlideshow({ ipAddress, onActive, onIdle, visible }: 
                 slideshowTimerRef.current = null;
             }
         };
-    }, [isIdle, slideImages.length]);
+    }, [isIdle, idleImages.length]);
 
     useEffect(() => {
         const overlayEl = overlayRef.current;
@@ -136,10 +145,10 @@ export default function IdleSlideshow({ ipAddress, onActive, onIdle, visible }: 
                 touchAction: 'none',
             }}
         >
-            {slideImages.map((src, idx) => (
+            {idleImages.map((idle, idx) => (
                 <img
                     key={idx}
-                    src={src}
+                    src={isInternal? idle.internal_img_url : idle.external_img_url}
                     alt={`slide-${idx}`}
                     style={{
                         position: 'absolute',
