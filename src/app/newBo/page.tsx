@@ -122,7 +122,7 @@ export default function BO() {
         orders.forEach((row) => {
             (g[row.ORDER_NO] ||= []).push(row);
         });
-        console.log(g);
+        // console.log(g);
         return g;
     }, [orders]);
 

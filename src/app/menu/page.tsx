@@ -7,7 +7,7 @@ import OverflowMarquee from "@/app/menu/OverflowMarquee";
 import useIsMobile from "@/util/useIsMobile";
 
 // ========================= Types =========================
-export type Category = "COFFEE" | "NON_COFFEE" | "ADE" | "TEA";
+export type Category = "COFFEE" | "NON_COFFEE" | "ADE" | "TEA" | "DESSERT";
 
 export interface MenuItem {
     id: string;
@@ -51,6 +51,7 @@ const CATEGORIES: { key: Category; label: string }[] = [
     { key: "NON_COFFEE", label: "논커피" },
     { key: "ADE", label: "에이드" },
     { key: "TEA", label: "차" },
+    { key: "DESSERT", label: "디저트" },
 ];
 
 // ========================= Component =========================
@@ -136,6 +137,8 @@ export default function KioskPage() {
                     return "ADE";
                 case "tea":
                     return "TEA";
+                case "dessert":
+                    return "DESSERT";
                 default:
                     return null;
             }
@@ -207,6 +210,11 @@ export default function KioskPage() {
             setSelectedOptions({ temp: "HOT", coffeeShot: "보통" });
         } else if (item.category === "TEA") {
             setSelectedOptions({ temp: "HOT" });
+        } else if (item.category === "DESSERT") {
+            // [추가됨] 디저트는 기본적으로 HOT(데움) 또는 별도 옵션 없이 설정
+            // 필요에 따라 ICE(차갑게)로 설정하거나, 옵션이 필요 없다면 빈 객체 {}를 줄 수도 있습니다.
+            // 현재 모달 구조상 Temp는 기본 노출되므로 HOT으로 설정해둡니다.
+            setSelectedOptions({ });
         }
     };
 
@@ -498,78 +506,91 @@ export default function KioskPage() {
                             <button onClick={() => setSelectedItem(null)} className="rounded-full border border-neutral-400 px-4 py-2 text-lg sm:text-xl hover:bg-neutral-100 dark:border-neutral-400 dark:hover:bg-neutral-100">✕</button>
                         </div>
 
-                        {selectedItem.category === "NON_COFFEE" && selectedItem.id !== 'n11' && (
-                            <p className="mb-8 text-lg sm:text-xl text-red-600 font-semibold text-center dark:text-red-600">
-                                펄 추가시 말씀해주세요 😊
-                            </p>
-                        )}
-
-                        {/* Temperature / ADE ICE only */}
-                        {selectedItem.id === "n11" || selectedItem.id === "c20" || selectedItem.category === "ADE" ? (
-                            <div className="mb-8">
-                                <h3 className="mb-3 font-bold">온도</h3>
-                                <div className="flex gap-4 text-lg sm:text-xl">
-                                    <button disabled className="px-4 py-3 rounded-xl border bg-neutral-100 text-neutral-500 cursor-not-allowed dark:bg-neutral-100 dark:text-neutral-500">HOT</button>
-                                    <button className="px-4 py-3 rounded-xl border bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white">ICE</button>
-                                </div>
-                                <p className="mt-2 text-base sm:text-lg text-neutral-500 dark:text-neutral-500">
-                                    {selectedItem.id === "n11" ? "아이스티는 ICE만 가능합니다." : selectedItem.id === "c20" ? "아샷추는 ICE만 가능합니다." : "에이드는 ICE만 가능합니다."}
+                        {/* ✅ 디저트일 경우 안내 문구 표시, 아닐 경우 기존 옵션 표시 */}
+                        {selectedItem.category === "DESSERT" ? (
+                            <div className="py-12 text-center">
+                                <p className="text-xl sm:text-3xl font-bold leading-relaxed text-neutral-800 dark:text-neutral-800">
+                                    별도로 현금 또는 계좌이체<br />
+                                    부탁드리겠습니다 😊
                                 </p>
                             </div>
                         ) : (
-                            <div className="mb-8">
-                                <h3 className="mb-3 font-bold">온도</h3>
-                                <div className="flex gap-4 text-lg sm:text-xl">
-                                    {["HOT", "ICE"].map((t) => (
-                                        <button key={t} onClick={() => setSelectedOptions((o) => ({ ...o, temp: t as Temp }))} className={["px-4 py-3 rounded-xl border", selectedOptions.temp === (t as Temp) ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{t}</button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {(selectedItem.category === "ADE" || selectedOptions.temp === "ICE") && (
-                            <div className="mb-8">
-                                <h3 className="mb-3 font-bold">얼음량</h3>
-                                <div className="flex gap-4 text-lg sm:text-xl">
-                                    {["적게", "보통", "많이"].map((lv) => (
-                                        <button key={lv} onClick={() => setSelectedOptions((o) => ({ ...o, ice: lv as IceLevel }))} className={["px-4 py-3 rounded-xl border", selectedOptions.ice === lv ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{lv}</button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {selectedItem.category === "COFFEE" && (
-                            <div className="mb-8">
-                                <h3 className="mb-3 font-bold">샷</h3>
-                                <div className="flex gap-4 text-lg sm:text-xl">
-                                    {["적게", "보통", "많이"].map((s) => (
-                                        <button key={s} onClick={() => setSelectedOptions((o) => ({ ...o, coffeeShot: s as CoffeeShot }))} className={["px-4 py-3 rounded-xl border", selectedOptions.coffeeShot === s ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{s}</button>
-                                    ))}
-                                </div>
-                                <p className="mt-2 text-base sm:text-lg text-neutral-500">기본값: 보통</p>
-                            </div>
-                        )}
-
-                        {(selectedItem.category === "NON_COFFEE" || selectedItem.category === "ADE") && (
                             <>
-                                <div className="mb-8">
-                                    <h3 className="mb-3 font-bold">샷</h3>
-                                    <div className="flex gap-4 text-lg sm:text-xl">
-                                        {["없음", "추가"].map((s) => (
-                                            <button key={s} onClick={() => setSelectedOptions((o) => ({ ...o, shotToggle: s as ShotToggle }))} className={["px-4 py-3 rounded-xl border", selectedOptions.shotToggle === s ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{s}</button>
-                                        ))}
+                                {/* ===== 기존 옵션 UI (펄 추가 문구, 온도, 얼음, 샷 등) ===== */}
+                                {selectedItem.category === "NON_COFFEE" && selectedItem.id !== 'n11' && (
+                                    <p className="mb-8 text-lg sm:text-xl text-red-600 font-semibold text-center dark:text-red-600">
+                                        펄 추가시 말씀해주세요 😊
+                                    </p>
+                                )}
+
+                                {/* Temperature / ADE ICE only */}
+                                {selectedItem.id === "n11" || selectedItem.id === "c20" || selectedItem.category === "ADE" ? (
+                                    <div className="mb-8">
+                                        <h3 className="mb-3 font-bold">온도</h3>
+                                        <div className="flex gap-4 text-lg sm:text-xl">
+                                            <button disabled className="px-4 py-3 rounded-xl border bg-neutral-100 text-neutral-500 cursor-not-allowed dark:bg-neutral-100 dark:text-neutral-500">HOT</button>
+                                            <button className="px-4 py-3 rounded-xl border bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white">ICE</button>
+                                        </div>
+                                        <p className="mt-2 text-base sm:text-lg text-neutral-500 dark:text-neutral-500">
+                                            {selectedItem.id === "n11" ? "아이스티는 ICE만 가능합니다." : selectedItem.id === "c20" ? "아샷추는 ICE만 가능합니다." : "에이드는 ICE만 가능합니다."}
+                                        </p>
                                     </div>
-                                    <p className="mt-2 text-base sm:text-lg text-neutral-500 dark:text-neutral-500">기본값: 없음</p>
-                                </div>
-                                <div className="mb-8">
-                                    <h3 className="mb-3 font-bold">달기 정도</h3>
-                                    <div className="flex gap-4 text-lg sm:text-xl">
-                                        {["덜 달게", "보통"].map((sw) => (
-                                            <button key={sw} onClick={() => setSelectedOptions((o) => ({ ...o, sweetness: sw as Sweetness }))} className={["px-4 py-3 rounded-xl border", selectedOptions.sweetness === sw ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{sw}</button>
-                                        ))}
+                                ) : (
+                                    <div className="mb-8">
+                                        <h3 className="mb-3 font-bold">온도</h3>
+                                        <div className="flex gap-4 text-lg sm:text-xl">
+                                            {["HOT", "ICE"].map((t) => (
+                                                <button key={t} onClick={() => setSelectedOptions((o) => ({ ...o, temp: t as Temp }))} className={["px-4 py-3 rounded-xl border", selectedOptions.temp === (t as Temp) ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{t}</button>
+                                            ))}
+                                        </div>
                                     </div>
-                                    <p className="mt-2 text-base sm:text-lg text-neutral-500">기본값: 보통</p>
-                                </div>
+                                )}
+
+                                {(selectedItem.category === "ADE" || selectedOptions.temp === "ICE") && (
+                                    <div className="mb-8">
+                                        <h3 className="mb-3 font-bold">얼음량</h3>
+                                        <div className="flex gap-4 text-lg sm:text-xl">
+                                            {["적게", "보통", "많이"].map((lv) => (
+                                                <button key={lv} onClick={() => setSelectedOptions((o) => ({ ...o, ice: lv as IceLevel }))} className={["px-4 py-3 rounded-xl border", selectedOptions.ice === lv ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{lv}</button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {selectedItem.category === "COFFEE" && (
+                                    <div className="mb-8">
+                                        <h3 className="mb-3 font-bold">샷</h3>
+                                        <div className="flex gap-4 text-lg sm:text-xl">
+                                            {["적게", "보통", "많이"].map((s) => (
+                                                <button key={s} onClick={() => setSelectedOptions((o) => ({ ...o, coffeeShot: s as CoffeeShot }))} className={["px-4 py-3 rounded-xl border", selectedOptions.coffeeShot === s ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{s}</button>
+                                            ))}
+                                        </div>
+                                        <p className="mt-2 text-base sm:text-lg text-neutral-500">기본값: 보통</p>
+                                    </div>
+                                )}
+
+                                {(selectedItem.category === "NON_COFFEE" || selectedItem.category === "ADE") && (
+                                    <>
+                                        <div className="mb-8">
+                                            <h3 className="mb-3 font-bold">샷</h3>
+                                            <div className="flex gap-4 text-lg sm:text-xl">
+                                                {["없음", "추가"].map((s) => (
+                                                    <button key={s} onClick={() => setSelectedOptions((o) => ({ ...o, shotToggle: s as ShotToggle }))} className={["px-4 py-3 rounded-xl border", selectedOptions.shotToggle === s ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{s}</button>
+                                                ))}
+                                            </div>
+                                            <p className="mt-2 text-base sm:text-lg text-neutral-500 dark:text-neutral-500">기본값: 없음</p>
+                                        </div>
+                                        <div className="mb-8">
+                                            <h3 className="mb-3 font-bold">달기 정도</h3>
+                                            <div className="flex gap-4 text-lg sm:text-xl">
+                                                {["덜 달게", "보통"].map((sw) => (
+                                                    <button key={sw} onClick={() => setSelectedOptions((o) => ({ ...o, sweetness: sw as Sweetness }))} className={["px-4 py-3 rounded-xl border", selectedOptions.sweetness === sw ? "bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white" : "bg-white dark:bg-white"].join(" ")}>{sw}</button>
+                                                ))}
+                                            </div>
+                                            <p className="mt-2 text-base sm:text-lg text-neutral-500">기본값: 보통</p>
+                                        </div>
+                                    </>
+                                )}
                             </>
                         )}
 
