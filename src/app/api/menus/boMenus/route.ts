@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
         const pool: Pool = getDbPool(ipAddress);
 
         const [rows] = await pool.query<MenuRow[]>(
-            "SELECT * FROM menu WHERE USE_YN = 'Y' ORDER BY ID ASC"
+            "SELECT * FROM menu ORDER BY USE_YN DESC, ID ASC"
         );
 
         return NextResponse.json(rows, {

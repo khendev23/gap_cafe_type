@@ -332,7 +332,7 @@ export default function KioskPage() {
 
             {/* Grid (3 columns) */}
             <div className="flex-1 min-h-0">
-                <div className="mx-auto max-w-5xl px-4 md:px-6 pb-40 md:pb-56 flex-1 overflow-y-auto overscroll-contain">
+                <div className="mx-auto max-w-5xl px-4 pt-6 md:px-6 pb-40 md:pb-56 flex-1 overflow-y-auto overscroll-contain">
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-6 sm:gap-5">
                         {filtered.map((item) => (
                             <button

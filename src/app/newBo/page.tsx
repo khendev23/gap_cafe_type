@@ -84,7 +84,7 @@ export default function BO() {
             setMenus([]);
         } else {
             axios
-                .post('/api/menus', { ipAddress })
+                .post('/api/menus/boMenus', { ipAddress })
                 .then((res) => {
                     setMenus(Array.isArray(res.data) ? res.data : []);
                     setMenuOpen(true);
