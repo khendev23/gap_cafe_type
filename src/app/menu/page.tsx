@@ -15,6 +15,7 @@ export interface MenuItem {
     category: Category;
     imageDataUrl?: string;
     soldOut?: boolean;
+    onlyIce?: boolean;
 }
 
 export type Temp = "HOT" | "ICE";
@@ -154,6 +155,7 @@ export default function KioskPage() {
                     category: (category || "COFFEE") as Category,
                     imageDataUrl: img || demoImg(String(m?.NAME ?? "Menu")),
                     soldOut: m?.USE_YN === "N",
+                    onlyIce: m?.ONLY_ICE_YN === "Y",
                 };
                 return item;
             });
@@ -190,14 +192,14 @@ export default function KioskPage() {
         if (item.soldOut) return;
         setSelectedItem(item);
 
-        // ✅ 아이스티(n11)는 ICE-only + 논커피 기본 옵션 포함
-        if (item.id === "n11") {
-            setSelectedOptions({ temp: "ICE", ice: "보통", shotToggle: "없음", sweetness: "보통" });
-            return;
-        }
-        // ✅ 아샷추(c20)는 ICE-only + 논커피 기본 옵션 포함
-        if (item.id === "c20") {
-            setSelectedOptions({ temp: "ICE", ice: "보통", coffeeShot: "보통" });
+        // ✅ ONLY_ICE_YN이 Y인 메뉴는 ICE로 고정
+        if (item.onlyIce) {
+            // 카테고리별로 적절한 기본 옵션 설정
+            if (item.category === "COFFEE") {
+                setSelectedOptions({ temp: "ICE", ice: "보통", coffeeShot: "보통" });
+            } else {
+                setSelectedOptions({ temp: "ICE", ice: "보통", shotToggle: "없음", sweetness: "보통" });
+            }
             return;
         }
 
@@ -289,11 +291,10 @@ export default function KioskPage() {
     };
 
     return (
-        <main className="min-h-screen bg-amber-50 text-neutral-900 text-xl dark:bg-amber-50 dark:text-neutral-900 flex flex-col min-h-0"
+        <main className="h-screen bg-amber-50 text-neutral-900 text-xl dark:bg-amber-50 dark:text-neutral-900 flex flex-col overflow-hidden"
               style={{
                   pointerEvents: isIdleVisible ? 'none' : 'auto',
                   userSelect: isIdleVisible ? 'none' : 'auto',
-                  touchAction: isIdleVisible ? 'none' : 'auto',
               }}
         >
             {/* Top bar (full-width sticky wrapper + centered inner) */}
@@ -331,15 +332,15 @@ export default function KioskPage() {
             </div>
 
             {/* Grid (3 columns) */}
-            <div className="flex-1 min-h-0">
-                <div className="mx-auto max-w-5xl px-4 pt-6 md:px-6 pb-40 md:pb-56 flex-1 overflow-y-auto overscroll-contain">
+            <div className="flex-1 overflow-y-auto overscroll-contain touch-pan-y">
+                <div className="mx-auto max-w-5xl px-4 pt-6 md:px-6 pb-40 md:pb-56">
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-6 sm:gap-5">
                         {filtered.map((item) => (
                             <button
                                 key={item.id}
                                 onClick={() => onMenuClick(item)} disabled={item.soldOut}
                                 className={[
-                                    "group relative rounded-2xl bg-white p-4 sm:p-5 shadow-md ring-1 ring-neutral-200 transition hover:shadow-lg dark:bg-white dark:ring-neutral-200",
+                                    "group relative rounded-2xl bg-white p-4 sm:p-5 shadow-md ring-1 ring-neutral-200 transition hover:shadow-lg dark:bg-white dark:ring-neutral-200 touch-manipulation",
                                     item.soldOut ? "opacity-60 grayscale cursor-not-allowed hover:shadow-md" : ""
                                 ].join(" ")}
                                 aria-disabled={item.soldOut || undefined}
@@ -517,14 +518,8 @@ export default function KioskPage() {
                         ) : (
                             <>
                                 {/* ===== 기존 옵션 UI (펄 추가 문구, 온도, 얼음, 샷 등) ===== */}
-                                {selectedItem.category === "NON_COFFEE" && selectedItem.id !== 'n11' && (
-                                    <p className="mb-8 text-lg sm:text-xl text-red-600 font-semibold text-center dark:text-red-600">
-                                        펄 추가시 말씀해주세요 😊
-                                    </p>
-                                )}
-
                                 {/* Temperature / ADE ICE only */}
-                                {selectedItem.id === "n11" || selectedItem.id === "c20" || selectedItem.category === "ADE" ? (
+                                {selectedItem.onlyIce || selectedItem.category === "ADE" ? (
                                     <div className="mb-8">
                                         <h3 className="mb-3 font-bold">온도</h3>
                                         <div className="flex gap-4 text-lg sm:text-xl">
@@ -532,7 +527,7 @@ export default function KioskPage() {
                                             <button className="px-4 py-3 rounded-xl border bg-neutral-900 text-white dark:bg-neutral-900 dark:text-white">ICE</button>
                                         </div>
                                         <p className="mt-2 text-base sm:text-lg text-neutral-500 dark:text-neutral-500">
-                                            {selectedItem.id === "n11" ? "아이스티는 ICE만 가능합니다." : selectedItem.id === "c20" ? "아샷추는 ICE만 가능합니다." : "에이드는 ICE만 가능합니다."}
+                                            {selectedItem.category === "ADE" ? "에이드는 ICE만 가능합니다." : `${selectedItem.name}은(는) ICE만 가능합니다.`}
                                         </p>
                                     </div>
                                 ) : (
