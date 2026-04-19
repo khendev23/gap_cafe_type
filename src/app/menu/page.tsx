@@ -7,7 +7,7 @@ import OverflowMarquee from "@/app/menu/OverflowMarquee";
 import useIsMobile from "@/util/useIsMobile";
 
 // ========================= Types =========================
-export type Category = "COFFEE" | "NON_COFFEE" | "ADE" | "TEA" | "DESSERT";
+export type Category = "TODAY" | "COFFEE" | "NON_COFFEE" | "ADE" | "TEA" | "DESSERT";
 
 export interface MenuItem {
     id: string;
@@ -48,6 +48,7 @@ const demoImg = (label: string) =>
     )}`;
 
 const CATEGORIES: { key: Category; label: string }[] = [
+    { key: "TODAY", label: "오늘의 메뉴" },
     { key: "COFFEE", label: "커피" },
     { key: "NON_COFFEE", label: "논커피" },
     { key: "ADE", label: "에이드" },
@@ -58,7 +59,7 @@ const CATEGORIES: { key: Category; label: string }[] = [
 // ========================= Component =========================
 export default function KioskPage() {
     // ----- UI state -----
-    const [active, setActive] = useState<Category>("COFFEE");
+    const [active, setActive] = useState<Category>("TODAY");
     const [cart, setCart] = useState<Record<string, CartEntry>>({});
     const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
     const [selectedOptions, setSelectedOptions] = useState<Options>({});
@@ -129,6 +130,8 @@ export default function KioskPage() {
 
         const mapCtgr = (c: string): Category | null => {
             switch ((c || "").toLowerCase()) {
+                case "today":
+                    return "TODAY";
                 case "coffee":
                     return "COFFEE";
                 case "noncoffee":
@@ -145,7 +148,7 @@ export default function KioskPage() {
             }
         };
 
-        return menusRaw
+        const dbItems: MenuItem[] = menusRaw
             .map((m) => {
                 const category = mapCtgr(m?.CATEGORY);
                 const img = isInternal ? m?.IN_GAP_IMG_URL : m?.IMG_URL;
@@ -159,6 +162,28 @@ export default function KioskPage() {
                 };
                 return item;
             });
+
+        // '오늘의 메뉴' (TODAY) 카테고리에 대추차, 생강차 추가
+        const todayItems: MenuItem[] = [
+            {
+                id: "today-daechu",
+                name: "대추차",
+                category: "TODAY",
+                imageDataUrl: demoImg("대추차"),
+                soldOut: false,
+                onlyIce: false,
+            },
+            {
+                id: "today-saenggang",
+                name: "생강차",
+                category: "TODAY",
+                imageDataUrl: demoImg("생강차"),
+                soldOut: false,
+                onlyIce: false,
+            }
+        ];
+
+        return [...todayItems, ...dbItems];
     }, [menusRaw, ipAddress]);
 
     // 카테고리 필터
@@ -204,7 +229,9 @@ export default function KioskPage() {
         }
 
         // 카테고리별 기본 옵션 설정 (이전 규칙 유지)
-        if (item.category === "ADE") {
+        if (item.category === "TODAY") {
+            setSelectedOptions({ temp: "HOT" });
+        } else if (item.category === "ADE") {
             setSelectedOptions({ temp: "ICE", ice: "보통", shotToggle: "없음", sweetness: "보통" });
         } else if (item.category === "NON_COFFEE") {
             setSelectedOptions({ temp: "HOT", shotToggle: "없음", sweetness: "보통" });

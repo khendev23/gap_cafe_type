@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function IdleSlideshow({ ipAddress, onActive, onIdle, visible }: Props) {
-    const [isIdle, setIsIdle] = useState(true);
+    const [isIdle, setIsIdle] = useState(false);
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
     const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
     const slideshowTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -37,8 +37,10 @@ export default function IdleSlideshow({ ipAddress, onActive, onIdle, visible }: 
     };
 
     const enterIdleMode = () => {
-        setIsIdle(true);
-        onIdle?.();
+        if (idleImages.length > 0) {
+            setIsIdle(true);
+            onIdle?.();
+        }
     };
 
     const exitIdleMode = () => {
@@ -69,7 +71,7 @@ export default function IdleSlideshow({ ipAddress, onActive, onIdle, visible }: 
             if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
             if (slideshowTimerRef.current) clearInterval(slideshowTimerRef.current);
         };
-    }, [isIdle]);
+    }, [isIdle, idleImages.length]);
 
     useEffect(() => {
         // 먼저 기존 타이머 정리
@@ -125,7 +127,7 @@ export default function IdleSlideshow({ ipAddress, onActive, onIdle, visible }: 
         };
     }, [isIdle]);
 
-    if (!visible) return null;
+    if (!visible || idleImages.length === 0) return null;
 
     return (
         <div
